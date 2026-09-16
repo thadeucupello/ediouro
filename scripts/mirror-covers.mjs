@@ -18,7 +18,7 @@ const editions = await catalogResponse.json()
 await fs.mkdir(outputDirectory, { recursive: true })
 
 const failures = []
-for (const [index, edition] of editions.entries()) {
+async function mirrorCover(edition, index) {
   try {
     const response = await fetch(edition.cover_source_url, {
       headers: { 'User-Agent': 'Ediouro catalog cover mirror/1.0' },
@@ -37,6 +37,12 @@ for (const [index, edition] of editions.entries()) {
   } catch (error) {
     failures.push({ ean: edition.ean, error: error instanceof Error ? error.message : String(error) })
   }
+}
+
+for (let index = 0; index < editions.length; index += 12) {
+  await Promise.all(
+    editions.slice(index, index + 12).map((edition, batchIndex) => mirrorCover(edition, index + batchIndex)),
+  )
 }
 
 if (failures.length) {
