@@ -1,0 +1,34 @@
+name: Mirror catalog covers
+
+on:
+  push:
+    branches:
+      - codex/supabase-catalog
+    paths:
+      - .github/workflows/mirror-covers.yml
+      - scripts/mirror-covers.mjs
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/supabase-catalog
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/mirror-covers.mjs
+      - name: Commit mirrored covers
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add preview/covers
+          git diff --cached --quiet && exit 0
+          git commit -m "Mirror catalog covers"
+          git push origin HEAD:codex/supabase-catalog
