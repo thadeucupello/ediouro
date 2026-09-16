@@ -76,6 +76,10 @@ create index if not exists catalog_editions_work_slug_idx
   on public.catalog_editions(work_slug);
 create index if not exists catalog_works_imprint_idx
   on public.catalog_works(imprint);
+create index if not exists catalog_works_import_id_idx
+  on public.catalog_works(import_id);
+create index if not exists catalog_editions_import_id_idx
+  on public.catalog_editions(import_id);
 
 create table if not exists public.catalog_contributors (
   slug text primary key,
@@ -99,6 +103,11 @@ create table if not exists public.catalog_series (
   import_id uuid references public.catalog_imports(id),
   updated_at timestamptz not null default now()
 );
+
+create index if not exists catalog_contributors_import_id_idx
+  on public.catalog_contributors(import_id);
+create index if not exists catalog_series_import_id_idx
+  on public.catalog_series(import_id);
 
 alter table public.catalog_imports enable row level security;
 alter table public.catalog_works enable row level security;
