@@ -14,14 +14,16 @@ function humanName(s){
 }
 const selectedIsbns=new Set(source.map(r=>String(r[0]||'').replace(/\D/g,'')).filter(Boolean));
 
-// Nesta primeira carga pública, Coquetel fica fora do catálogo geral. Também saem
-// edições antigas/inativas que não pertencem ao recorte B2B + RGE validado.
+// Coquetel fica fora do catálogo geral nesta fase. O B2B enriquece e adiciona,
+// mas não apaga o backlist editorial já curado no site. Kits comerciais EAN-only
+// ficam fora do catálogo de livros.
 DATA.editions=DATA.editions.filter(e=>{
  const w=W[e.workSlug];
  if(w?.imprint==='coquetel')return false;
- const k=isbnOf(e);
- if(k&&selectedIsbns.has(k))return true;
- return e.status==='pre-venda'||e.status==='lancamento-futuro';
+ const isbn=String(e?.isbn||'').replace(/\\D/g,'');
+ const ean=String(e?.ean||'').replace(/\\D/g,'');
+ if(!isbn&&/^789/.test(ean))return false;
+ return true;
 });
 const initiallyKept=new Set(DATA.editions.map(e=>e.workSlug));
 DATA.works=DATA.works.filter(w=>w.imprint!=='coquetel'&&initiallyKept.has(w.slug));
@@ -60,6 +62,12 @@ source.forEach(row=>{
   existing.source={...(existing.source||{}),system:existing.source?.system||'catalogo-integrado',sku:isbn,active:true,rgeDate:'2026-09-17',rgeCover:cover||null,coverSystem:existing.cover?'rge-ou-curada':'pending-rge-pcp'};
   const ew=W[existing.workSlug];
   if(ew&&(!ew.categories||!ew.categories.length)&&categories.length)ew.categories=[...categories];
+  if(ew&&rawAuthors.length){
+   ew.credits=ew.credits||[];
+   rawAuthors.map(a=>contributor(a,imprint)).filter(Boolean).forEach(s=>{
+    if(!ew.credits.some(x=>x.role==='autor'&&x.contributor===s))ew.credits.push({contributor:s,role:'autor'});
+   });
+  }
   updatedEditions++;return;
  }
  const authorKey=authors.map(norm).sort().join('|');
