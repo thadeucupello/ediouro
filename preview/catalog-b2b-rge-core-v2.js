@@ -101,5 +101,4 @@ home=function(){
  return out;
 };
 window.EDIOURO_CATALOG_LOAD={source:'B2B 2026-09-15 + RGE 2026-09-17',coquetelInGeneralCatalog:false,commercialKitExcluded:true,sourceRecords:source.length,createdWorks,createdEditions,updatedEditions,filledCovers,totalWorks:DATA.works.length,totalEditions:DATA.editions.length};
-delete window.__EDIOURO_CATALOG_SOURCE;
 })();
