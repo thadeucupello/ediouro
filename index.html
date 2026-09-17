@@ -61,7 +61,8 @@
    ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-13.js'],
    ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-14.js'],
    ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-15.js'],
-   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/ac07bed966eec066ed44623b4bd45503c715d9a8/preview/catalog-b2b-rge-core-v2.js']
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/57ed09d0ccb39b9a4cfb4566a60237924cd60f77/preview/catalog-b2b-rge-core-v2.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40f09189ec7d26f4e9795d2e302d87a8ad3bf7cc/preview/authors-b2b-reconcile-v1.js']
   ];
   const loaded=await Promise.all(assets.map(async([kind,url])=>{
    try{const r=await fetch(url,{cache:'force-cache'});return r.ok?[kind,await r.text()]:null}catch(_){return null}
