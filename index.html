@@ -45,7 +45,23 @@
    ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/1f2dbda3d5d41ad8d6935b0edd376612039e5424/preview/site-enhancements-v1.js'],
    ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/551a47f1b93d91a602d61dc57c80447b96ab5c8e/preview/support-pages-v2.js'],
    ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/d66c69d40a607b381511606504d7519c2c697d80/preview/support-distribution-v1.js'],
-   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/a8237fd54d57602eaf0caeb1c771b1a5746216a0/preview/home-interest-nav-v1.js']
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/a8237fd54d57602eaf0caeb1c771b1a5746216a0/preview/home-interest-nav-v1.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-01.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-02.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-03.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-04.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-05.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-06.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-07.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-08.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-09.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-10.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-11.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-12.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-13.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-14.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-v2-15.js'],
+   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40755a57363a5e86c887036ad4201493c9a109d4/preview/catalog-b2b-rge-core-v2.js']
   ];
   const loaded=await Promise.all(assets.map(async([kind,url])=>{
    try{const r=await fetch(url,{cache:'force-cache'});return r.ok?[kind,await r.text()]:null}catch(_){return null}
