@@ -79,6 +79,10 @@
    const educationPatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/b15699ffac32b2efa557104bf719a70788fc6217/preview/education-v1.js',{cache:'no-store'});
    if(educationPatch.ok)loaded.push(['js',await educationPatch.text()]);
   }catch(e){}
+  try{
+   const coverPatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/d4c17f80a03c268f4337f6d5930d9ab92f5f8539/preview/covers-v2.js',{cache:'no-store'});
+   if(coverPatch.ok)loaded.push(['js',await coverPatch.text()]);
+  }catch(e){}
   for(const item of loaded){
    if(!item)continue;
    const [kind,text]=item;
