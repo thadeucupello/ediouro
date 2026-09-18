@@ -1,4 +1,17 @@
 (function(){
+const EDIOURO_COVER_BASE='https://wubthvvtncflzkblgtzh.supabase.co/storage/v1/object/public/catalog-covers/';
+function ediouroCatalogCoverUrl(isbn){
+  const clean=String(isbn||'').replace(/\\D/g,'');
+  return clean.length===13?EDIOURO_COVER_BASE+clean+'.jpg':'';
+}
+window.ediouroCatalogCoverUrl=ediouroCatalogCoverUrl;
+
+// A partir de 18/09/2026, o catálogo público usa as cópias próprias do Grupo Ediouro
+// no Supabase, nomeadas pelo ISBN. O RGE fica somente como acervo/origem mestre.
+(DATA.editions||[]).forEach(e=>{
+  const url=ediouroCatalogCoverUrl(e?.isbn||e?.ean);
+  if(url)e.cover=url;
+});
 window.ediouroCoverError=function(img){
   const box=img&&img.closest?img.closest('.cover'):null;
   if(!box)return;
@@ -38,10 +51,11 @@ style.textContent=`
 `;
 document.head.appendChild(style);
 window.EDIOURO_COVER_POLICY={
-  canonicalSource:'RGE/SimpleSet frontal',
+  canonicalSource:'Supabase catalog-covers (originais preservados no Drive/RGE)',
+  naming:'ISBN-13.jpg',
   ecommerceFallback:false,
   brokenImageFallback:'placeholder institucional',
   cardRatio:'2:3',
-  rule:'Nunca usar mockup ou imagem de e-commerce como capa do catálogo.'
+  rule:'O site público não depende mais das URLs de capa do RGE/SimpleSet.'
 };
 })();
