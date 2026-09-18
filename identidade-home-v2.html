@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ediouro — Home identidade V2</title>
-<style>html,body{margin:0;background:#f2ede5;color:#211d19;font:14px system-ui}#s{min-height:100vh;display:grid;place-items:center;opacity:.6}</style>
+<style>html,body{margin:0;background:#f5f1ea;color:#171515;font:14px system-ui}#s{min-height:100vh;display:grid;place-items:center;opacity:.6}</style>
 </head>
 <body>
 <div id="s">Carregando estudo de identidade…</div>
@@ -20,159 +20,21 @@
   const newCatalogJs='https://raw.githubusercontent.com/thadeucupello/ediouro/054195f0dcfe0e7f3c585411fa139ec8cbcb3b28/preview/catalog-v3.js';
   const oldPcpBase='https://raw.githubusercontent.com/thadeucupello/ediouro/8bdbc6d00024aa4b4cff88784ad4ee750192f577/preview/pcp-v2/';
   const newPcpBase='https://raw.githubusercontent.com/thadeucupello/ediouro/ce7b1c480bd3520f92376bc33dc884af0a99e45b/preview/pcp-v2/';
-
-  const themeCss=`
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap');
-
-:root{
- --paper:#f2ede5 !important;
- --paper2:#e8e0d5 !important;
- --paper3:#faf7f1 !important;
- --ink:#211d19 !important;
- --muted:#6e665e !important;
- --line:#d8cfc2 !important;
- --green:#171717 !important;
- --gold:#0028ef !important;
-}
-
-body{
- background:var(--paper)!important;
- color:var(--ink)!important;
- font-family:'Poppins',Arial,sans-serif!important;
-}
-button,input,select,textarea{font-family:'Poppins',Arial,sans-serif!important}
-.serif,h1,h2,h3{
- font-family:'Newsreader',Georgia,serif!important;
- font-weight:500!important;
-}
-.logo{
- font-family:'Poppins',Arial,sans-serif!important;
- font-weight:700!important;
- letter-spacing:-.045em!important;
-}
-header{
- background:rgba(242,237,229,.96)!important;
- border-bottom:1px solid var(--line)!important;
-}
-.nav{font-family:'Poppins',Arial,sans-serif!important}
-.nav a:hover{color:#0028ef!important;text-decoration-color:#0028ef!important}
-.eyebrow{
- font-family:'Poppins',Arial,sans-serif!important;
- color:#0028ef!important;
-}
-.hero h1{font-weight:500!important}
-.hero .lead{
- font-family:'Newsreader',Georgia,serif!important;
- color:#5d554d!important;
-}
-.searchbox{
- border-bottom-color:#211d19!important;
-}
-.searchbox input{
- font-family:'Newsreader',Georgia,serif!important;
-}
-.searchbox button{
- background:#0028ef!important;
- color:#fff!important;
-}
-.examples .chip:hover{
- border-color:#0028ef!important;
- color:#0028ef!important;
-}
-.link{
- color:#0028ef!important;
- border-bottom-color:#0028ef!important;
-}
-.cat.fantasy{background:#0028ef!important}
-.cat.crime{background:#151515!important}
-.cat.romance{background:#ff97d6!important;color:#211d19!important}
-.cat h3,.cat p{color:inherit!important}
-.feature{
- background:#171717!important;
- color:#f6f3ed!important;
- position:relative;
-}
-.feature:before{
- content:'';
- position:absolute;left:0;top:0;bottom:0;width:7px;
- background:#0028ef;
-}
-.feature p{color:#d7d1c9!important}
-.feature .eyebrow{color:#8ea0ff!important}
-.feature .cta{
- border-color:#8ea0ff!important;
- color:#fff!important;
-}
-.recess{background:var(--paper2)!important}
-.brand-title{font-weight:500!important}
-.brand-shelf-native .brand-panel-content .eyebrow{color:inherit!important}
-.brand-shelf-native .brand-panel-content h3{
- font-family:'Newsreader',Georgia,serif!important;
- font-weight:500!important;
-}
-.brand-shelf-native .brand-panel-content p{
- font-family:'Poppins',Arial,sans-serif!important;
-}
-.panorama .series-box{
- background:#171717!important;
-}
-.panorama .series-box .eyebrow{color:#8ea0ff!important}
-.story .eyebrow{color:#0028ef!important}
-.institutional{
- background:#171717!important;
- color:#f6f3ed!important;
- position:relative;
-}
-.institutional:before{
- content:'';
- position:absolute;left:0;top:0;bottom:0;width:7px;
- background:#0028ef;
-}
-.institutional .eyebrow{color:#8ea0ff!important}
-.institutional p{color:#d8d2ca!important}
-.newsletter .cta{
- border-color:#8ea0ff!important;
- color:#fff!important;
-}
-.footer{background:#111!important}
-.page-hero{background:var(--paper3)!important}
-.catalog-v3-hero{
- background:linear-gradient(180deg,#faf7f1 0%,#eee7dc 100%)!important;
-}
-.catalog-v3-title h1{
- font-family:'Newsreader',Georgia,serif!important;
- font-weight:500!important;
-}
-.catalog-v3-search button{
- background:#0028ef!important;
- border-color:#0028ef!important;
- color:#fff!important;
-}
-.catalog-sort-chip.active,
-.catalog-v3-shortcuts>span.active{
- border-color:#0028ef!important;
- color:#0028ef!important;
-}
-.catalog-v3-shortcuts>span:hover{
- border-color:#0028ef!important;
- color:#0028ef!important;
-}
-.series-hero .eyebrow{color:inherit!important}
-::selection{background:#0028ef;color:#fff}
-
-@media(max-width:760px){
- .hero h1{font-size:54px!important}
-}
-`;
+  const theme='https://raw.githubusercontent.com/thadeucupello/ediouro/4b16bba6b52921bd076235d90d3ab314843ca94c/preview/identity-home-v2.css';
 
   const r=await fetch(source,{cache:'no-store'});
   if(!r.ok)throw new Error('base '+r.status);
   let h=await r.text();
+
   h=h.replace(oldCover,newCover)
      .replace(oldCatalogCss,newCatalogCss)
      .replace(oldCatalogJs,newCatalogJs)
      .replace(oldPcpBase,newPcpBase);
-  h=h.replace('</head>','<style id="ediouro-identity-v2">'+themeCss+'</style></head>');
+
+  const assetAnchor="   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/a8237fd54d57602eaf0caeb1c771b1a5746216a0/preview/home-interest-nav-v1.js'],";
+  if(!h.includes(assetAnchor))throw new Error('ponto de tema não encontrado');
+  h=h.replace(assetAnchor,assetAnchor+"\n   ['css','"+theme+"'],");
+
   document.open();document.write(h);document.close();
  }catch(e){
   document.getElementById('s').textContent='Não foi possível carregar o estudo. '+e.message;
