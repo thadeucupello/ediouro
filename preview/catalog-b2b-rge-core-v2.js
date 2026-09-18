@@ -20,8 +20,8 @@ const selectedIsbns=new Set(source.map(r=>String(r[0]||'').replace(/\D/g,'')).fi
 DATA.editions=DATA.editions.filter(e=>{
  const w=W[e.workSlug];
  if(w?.imprint==='coquetel')return false;
- const isbn=String(e?.isbn||'').replace(/\\D/g,'');
- const ean=String(e?.ean||'').replace(/\\D/g,'');
+ const isbn=String(e?.isbn||'').replace(/\D/g,'');
+ const ean=String(e?.ean||'').replace(/\D/g,'');
  if(!isbn&&/^789/.test(ean))return false;
  return true;
 });
@@ -82,6 +82,20 @@ source.forEach(row=>{
  const ed={id:'b2b-'+isbn,workSlug:w.slug,label:spec[0],format:spec[1],publicationDate:publicationDate||'',language:'pt-BR',status:'em-catalogo',source:{system:'b2b+rge',sku:isbn,active:true,rgeDate:'2026-09-17',coverSystem:'rge-inf-capa'},binding:spec[0],isbn,ean:isbn,cover,gallery:[],price,currency:'BRL',displayPriority:100,retailerLinks:[]};
  DATA.editions.push(ed);(ED[w.slug]??=[]).push(ed);editionByIsbn.set(isbn,ed);createdEditions++;
 });
+
+const expectedSourceIsbns=new Set(source.map(r=>String(r[0]||'').replace(/\D/g,'')).filter(Boolean));
+const actualSourceIsbns=new Set(DATA.editions.map(e=>isbnOf(e)).filter(Boolean));
+const missingSourceRows=source.filter(r=>!actualSourceIsbns.has(String(r[0]||'').replace(/\D/g,'')));
+const sourceByAuthor=(name)=>source.filter(r=>String(r[3]||'').toLowerCase().includes(name.toLowerCase()));
+window.EDIOURO_CATALOG_AUDIT={
+ expectedRows:source.length,
+ expectedUniqueIsbns:expectedSourceIsbns.size,
+ presentSourceIsbns:[...expectedSourceIsbns].filter(x=>actualSourceIsbns.has(x)).length,
+ missingSourceRows:missingSourceRows.map(r=>({isbn:r[0],title:r[1],author:r[3],imprintCode:r[2]})),
+ brandonExpected:sourceByAuthor('Brandon Sanderson').map(r=>r[1]),
+ caraExpected:sourceByAuthor('Cara Hunter').map(r=>r[1]),
+ claireExpected:sourceByAuthor('Claire Douglas').map(r=>r[1])
+};
 
 // Remove obras sem nenhuma edição pública depois da consolidação e limpa índices auxiliares.
 const finalWorkSlugs=new Set(DATA.editions.map(e=>e.workSlug));
