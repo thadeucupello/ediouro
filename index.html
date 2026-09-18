@@ -96,6 +96,10 @@
    if(pixelStorePatch.ok)loaded.push(['js',await pixelStorePatch.text()]);
   }catch(e){}
   try{
+   const nfLiveStorePatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/13ecabc0f590b60e8e7d3c9cbace4ca2a4abd194/preview/nf-live-store-synopsis-v1.js',{cache:'no-store'});
+   if(nfLiveStorePatch.ok)loaded.push(['js',await nfLiveStorePatch.text()]);
+  }catch(e){}
+  try{
    const educationPatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/cf09948fca26cbb6346595ca4be8215108b3896f/preview/education-v1.js',{cache:'no-store'});
    if(educationPatch.ok)loaded.push(['js',await educationPatch.text()]);
   }catch(e){}
