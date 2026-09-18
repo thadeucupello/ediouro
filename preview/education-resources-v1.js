@@ -27,8 +27,8 @@ educationPage=function(params){
     </div>
   </div></section>
   <section class="edu-pnld"><div class="wrap edu-pnld-grid">
-    <div><div class="eyebrow">Programa Nacional do Livro e do Material Didático</div><h2>PNLD 2026</h2><p>Conheça as obras da Ediouro Educação para Creche, Pré-escola e Apoio Pedagógico, com informações específicas para o processo de escolha.</p></div>
-    <div class="edu-pnld-side"><div class="edu-pnld-tags"><span>Creche</span><span>Pré-escola</span><span>Apoio Pedagógico</span></div><a class="edu-external-cta edu-pnld-cta" href="${EDU_PNLD_URL}" target="_blank" rel="noopener noreferrer">Acessar o site do PNLD <span>↗</span></a></div>
+    <div><div class="eyebrow">Programa Nacional do Livro e do Material Didático</div><h2>PNLD 2026 · Educação Infantil</h2><p>Conheça as obras literárias, informativas e de apoio pedagógico da Ediouro Educação, organizadas para Creche, Pré-escola e formação de professores.</p></div>
+    <div class="edu-pnld-side"><div class="edu-pnld-tags"><span>Creche · 0 a 3 anos</span><span>Pré-escola · 4 e 5 anos</span><span>Apoio Pedagógico · professores</span></div><a class="edu-external-cta edu-pnld-cta" href="${EDU_PNLD_URL}" target="_blank" rel="noopener noreferrer">Acessar o site do PNLD <span>↗</span></a></div>
   </div></section>`;
   return out.replace('<section class="edu-values">',downloads+'<section class="edu-values">');
 };
