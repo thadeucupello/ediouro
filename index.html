@@ -13,7 +13,7 @@
  try{
   const source='https://raw.githubusercontent.com/thadeucupello/ediouro/79160aa2cb932ff2fcc7d956e6175d57f7ecf4b7/index.html';
   const oldCover='https://raw.githubusercontent.com/thadeucupello/ediouro/d4c17f80a03c268f4337f6d5930d9ab92f5f8539/preview/covers-v2.js';
-  const newCover='https://raw.githubusercontent.com/thadeucupello/ediouro/79160aa2cb932ff2fcc7d956e6175d57f7ecf4b7/preview/covers-v2.js';
+  const newCover='https://raw.githubusercontent.com/thadeucupello/ediouro/f34a2a506ead43e2dac66e102f6d6cb938cc8e1c/preview/covers-v2.js';
   const r=await fetch(source,{cache:'no-store'});
   if(!r.ok)throw new Error('base '+r.status);
   let h=await r.text();
