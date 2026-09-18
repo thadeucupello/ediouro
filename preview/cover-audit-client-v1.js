@@ -40,10 +40,10 @@ async function testCoverAuditRow(row){
     const url=candidates[i];
     const ok=await new Promise(resolve=>{
       const im=new Image();
-      const timer=setTimeout(()=>{im.onload=im.onerror=null;resolve(false)},8000);
+      const timer=setTimeout(()=>{im.onload=im.onerror=null;im.src='';resolve(false)},4500);
       im.onload=()=>{clearTimeout(timer);resolve(true)};
       im.onerror=()=>{clearTimeout(timer);resolve(false)};
-      im.src=url+(url.includes('?')?'&':'?')+'qa='+Date.now()+'_'+Math.random().toString(36).slice(2);
+      im.src=url;
     });
     if(ok)return {isbn,title,file,ok:true,url,attempt:i+1};
   }
@@ -54,7 +54,7 @@ async function runCoverAudit(){
   const list=document.getElementById('caList'),bar=document.getElementById('caBar');
   if(!list||!rows.length)return;
   const results=[];let index=0,ok=0,broken=0;
-  const concurrency=10;
+  const concurrency=16;
   async function worker(){
     while(index<rows.length){
       const current=index++;
