@@ -44,3 +44,21 @@
   overflow:hidden;
   align-items:end;
 }
+
+
+/* Book detail: respect each cover's real proportion — 2026-09-18 */
+.detail-top>div:first-child .cover:not(.placeholder){
+  aspect-ratio:auto;
+  background:transparent;
+  overflow:visible;
+  display:block;
+}
+.detail-top>div:first-child .cover:not(.placeholder) img{
+  width:100%;
+  height:auto;
+  max-width:100%;
+  max-height:none;
+  object-fit:contain;
+  display:block;
+  box-shadow:0 18px 32px -22px rgba(0,0,0,.72);
+}
