@@ -1,16 +1,33 @@
 (function(){
 const EDIOURO_COVER_BASE='https://wubthvvtncflzkblgtzh.supabase.co/storage/v1/object/public/catalog-covers/';
-function ediouroCatalogCoverUrl(isbn){
-  const clean=String(isbn||'').replace(/\\D/g,'');
-  return clean.length===13?EDIOURO_COVER_BASE+clean+'.jpg':'';
+function ediouroCatalogCoverKey(value){
+  return String(value||'').replace(/\D/g,'');
+}
+function ediouroEditionCoverKey(e){
+  for(const value of [e?.isbn,e?.ean,e?.source?.sku]){
+    const key=ediouroCatalogCoverKey(value);
+    if(key.length===13)return key;
+  }
+  return '';
+}
+function ediouroCatalogCoverUrl(value){
+  const key=ediouroCatalogCoverKey(value);
+  return key.length===13?EDIOURO_COVER_BASE+key+'.jpg':'';
 }
 window.ediouroCatalogCoverUrl=ediouroCatalogCoverUrl;
 
 // A partir de 18/09/2026, o catálogo público usa as cópias próprias do Grupo Ediouro
 // no Supabase, nomeadas pelo ISBN. O RGE fica somente como acervo/origem mestre.
+// Algumas edições antigas têm ISBN formatado ou incompleto; nesses casos usamos a
+// edição irmã da mesma obra para que o card não permaneça em "Capa em atualização".
+const ediouroWorkCoverKey={};
 (DATA.editions||[]).forEach(e=>{
-  const url=ediouroCatalogCoverUrl(e?.isbn||e?.ean);
-  if(url)e.cover=url;
+  const key=ediouroEditionCoverKey(e);
+  if(key&&!ediouroWorkCoverKey[e.workSlug])ediouroWorkCoverKey[e.workSlug]=key;
+});
+(DATA.editions||[]).forEach(e=>{
+  const key=ediouroEditionCoverKey(e)||ediouroWorkCoverKey[e.workSlug]||'';
+  if(key)e.cover=EDIOURO_COVER_BASE+key+'.jpg';
 });
 window.ediouroCoverError=function(img){
   const box=img&&img.closest?img.closest('.cover'):null;
