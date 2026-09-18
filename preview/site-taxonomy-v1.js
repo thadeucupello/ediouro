@@ -23,8 +23,9 @@ function setSeriesV(slug,name,mainContributor,imprint,description,slugs){
  s.workSlugs=list;
  list.forEach((x,i)=>{if(W[x]){W[x].series=slug;if(!Number.isFinite(W[x].seriesOrder))W[x].seriesOrder=i+1}});
 }
-setSeriesV('mistborn','Mistborn','brandon-sanderson','trama','A primeira era de Mistborn e histórias diretamente ligadas a Scadrial.',['mistborn-o-imperio-final','mistborn-o-poco-da-ascensao','mistborn-o-heroi-das-eras','mistborn-historia-secreta']);
-setSeriesV('mistborn-wax-wayne','Mistborn: Wax & Wayne','brandon-sanderson','trama','A segunda era de Mistborn, acompanhando Wax e Wayne em uma Scadrial em transformação.',['mistborn-a-liga-da-lei','mistborn-as-sombras-de-si-mesmo','mistborn-os-braceletes-da-perdicao','mistborn-o-metal-perdido']);
+if(W['mistborn-historia-secreta'])delete W['mistborn-historia-secreta'].series;
+setSeriesV('mistborn','Mistborn — Trilogia Original','brandon-sanderson','trama','A trilogia original de Mistborn: O Império Final, O Poço da Ascensão e O Herói das Eras.',['mistborn-o-imperio-final','mistborn-o-poco-da-ascensao','mistborn-o-heroi-das-eras']);
+setSeriesV('mistborn-wax-wayne','Mistborn — Wax & Wayne','brandon-sanderson','trama','A segunda era de Mistborn, acompanhando Wax e Wayne em uma Scadrial em transformação.',['mistborn-a-liga-da-lei','mistborn-as-sombras-de-si-mesmo','mistborn-os-braceletes-da-perdicao','mistborn-o-metal-perdido']);
 setSeriesV('arquivo-das-tempestades','Os Relatos da Guerra das Tempestades','brandon-sanderson','trama','Roshar é varrido por tempestades que moldam a vida, a guerra e a magia.',['o-caminho-dos-reis','palavras-de-radiancia','sacramentadora','ritmo-da-guerra','vento-e-verdade']);
 setSeriesV('bloodsworn','Saga Bloodsworn','john-gwynne','trama','Fantasia épica de inspiração nórdica, com deuses mortos, juramentos e batalhas.',['a-sombra-dos-deuses','a-fome-dos-deuses','a-furia-dos-deuses']);
 setSeriesV('legado-do-ferro-negro','O Legado do Ferro Negro','gareth-hanrahan','trama','A série de fantasia de Gareth Hanrahan ambientada em Guerdon.',['a-oracao-dos-miseraveis','o-santo-das-sombras','o-deus-quebrado']);
