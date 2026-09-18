@@ -62,3 +62,19 @@
   display:block;
   box-shadow:0 18px 32px -22px rgba(0,0,0,.72);
 }
+
+
+/* Lists: fixed alignment without visible matte — 2026-09-18 */
+.book .book-cover{
+  background:transparent !important;
+  box-shadow:none !important;
+}
+.book .book-cover>.cover:not(.placeholder){
+  background:transparent !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+}
+.book .book-cover>.cover:not(.placeholder) img{
+  background:transparent !important;
+  box-shadow:0 16px 28px -20px rgba(0,0,0,.78) !important;
+}
