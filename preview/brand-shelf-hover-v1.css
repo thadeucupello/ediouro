@@ -1,0 +1,128 @@
+/* Brand shelf hover preview — 2026-09-18 */
+.brand-shelf.brand-shelf-hover{
+  display:flex;
+  gap:4px;
+  height:420px;
+  overflow:hidden;
+}
+.brand-shelf-hover .brand-panel{
+  position:relative;
+  flex:0 0 74px;
+  min-width:74px;
+  height:100%;
+  overflow:hidden;
+  cursor:pointer;
+  color:var(--brand-ink,#fff);
+  background:var(--brand-color,#222);
+  transition:flex-basis .36s cubic-bezier(.2,.75,.2,1),flex-grow .36s cubic-bezier(.2,.75,.2,1);
+}
+.brand-shelf-hover .brand-panel.is-active{
+  flex:1 1 auto;
+  min-width:0;
+}
+.brand-shelf-hover .brand-panel-spine{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding-bottom:25px;
+  opacity:1;
+  transition:opacity .16s ease;
+}
+.brand-shelf-hover .brand-panel-spine span{
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  font-size:11px;
+  letter-spacing:.15em;
+  font-weight:700;
+}
+.brand-shelf-hover .brand-panel.is-active .brand-panel-spine{
+  opacity:0;
+  pointer-events:none;
+}
+.brand-shelf-hover .brand-panel-open{
+  position:absolute;
+  inset:0;
+  padding:34px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  opacity:0;
+  transform:translateX(14px);
+  pointer-events:none;
+  transition:opacity .2s ease .08s,transform .24s ease .08s;
+}
+.brand-shelf-hover .brand-panel.is-active .brand-panel-open{
+  opacity:1;
+  transform:none;
+  pointer-events:auto;
+}
+.brand-shelf-hover .brand-panel-open h3{
+  font-size:45px;
+  line-height:1.02;
+  max-width:520px;
+  margin:10px 0 16px;
+}
+.brand-shelf-hover .brand-panel-open p{
+  line-height:1.55;
+  max-width:600px;
+  margin:0;
+  color:inherit;
+  opacity:.84;
+}
+.brand-shelf-hover .brand-panel-open .eyebrow{
+  color:inherit;
+  opacity:.78;
+}
+.brand-shelf-hover .brand-mini{
+  display:flex;
+  gap:13px;
+  align-items:flex-end;
+  min-height:112px;
+}
+.brand-shelf-hover .brand-mini .cover{
+  width:74px;
+  background:transparent;
+  overflow:visible;
+}
+.brand-shelf-hover .brand-mini .cover img{
+  background:transparent;
+  box-shadow:0 16px 28px -20px rgba(0,0,0,.78);
+}
+.brand-shelf-hover .brand-visit{
+  position:absolute;
+  right:28px;
+  bottom:28px;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  border-bottom:1px solid currentColor;
+  padding-bottom:3px;
+}
+@media(max-width:760px){
+  .brand-shelf.brand-shelf-hover{
+    height:auto;
+    overflow-x:auto;
+    margin-right:-20px;
+    padding-right:20px;
+    scroll-snap-type:x proximity;
+  }
+  .brand-shelf-hover .brand-panel,
+  .brand-shelf-hover .brand-panel.is-active{
+    flex:0 0 82vw;
+    min-width:82vw;
+    height:360px;
+    scroll-snap-align:start;
+  }
+  .brand-shelf-hover .brand-panel-spine{display:none}
+  .brand-shelf-hover .brand-panel-open{
+    opacity:1;
+    transform:none;
+    pointer-events:auto;
+    padding:26px;
+  }
+  .brand-shelf-hover .brand-panel-open h3{font-size:36px;max-width:92%}
+  .brand-shelf-hover .brand-visit{right:24px;bottom:24px}
+}
