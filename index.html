@@ -20,12 +20,21 @@
   const newCatalogJs='https://raw.githubusercontent.com/thadeucupello/ediouro/054195f0dcfe0e7f3c585411fa139ec8cbcb3b28/preview/catalog-v3.js';
   const brandShelfCss='https://raw.githubusercontent.com/thadeucupello/ediouro/8f0b04f20b028a2cc5ef957d2be9bb662f5cb376/preview/brand-shelf-hover-v1.css';
   const brandShelfJs='https://raw.githubusercontent.com/thadeucupello/ediouro/06dbf6e0e7a78e328e9cf389c73c75a897100400/preview/brand-shelf-hover-v1.js';
-  const r=await fetch(source,{cache:'no-store'});
+  const [r,brandCssRes,brandJsRes]=await Promise.all([
+    fetch(source,{cache:'no-store'}),
+    fetch(brandShelfCss,{cache:'no-store'}),
+    fetch(brandShelfJs,{cache:'no-store'})
+  ]);
   if(!r.ok)throw new Error('base '+r.status);
+  if(!brandCssRes.ok)throw new Error('brand css '+brandCssRes.status);
+  if(!brandJsRes.ok)throw new Error('brand js '+brandJsRes.status);
   let h=await r.text();
+  const brandCss=await brandCssRes.text();
+  const brandJs=await brandJsRes.text();
   h=h.replace(oldCover,newCover).replace(oldCatalogCss,newCatalogCss).replace(oldCatalogJs,newCatalogJs);
-  h=h.replace('</head>','<link rel="stylesheet" href="'+brandShelfCss+'"></head>');
-  h=h.replace('</body>','<script src="'+brandShelfJs+'"><\\/script></body>');
+  h=h.replace('</head>','<style>'+brandCss+'</style></head>');
+  h=h.replace('<!-- brand-shelf-hover: v2-inline-assets -->
+</body>','<scr'+'ipt>'+brandJs+'</scr'+'ipt></body>');
   document.open();document.write(h);document.close();
  }catch(e){
   document.getElementById('s').textContent='Não foi possível carregar a prévia. '+e.message;
@@ -40,6 +49,5 @@
 <!-- cover-detail-ratio: 2026-09-18-natural -->
 <!-- list-cover-matte: 2026-09-18-none -->
 <!-- catalog-default-order: newest-first-2026-09-18 -->
-<!-- brand-shelf-hover: v1-fixed -->
 </body>
 </html>
