@@ -1,9 +1,11 @@
 name: RGE cover download test
 
 on:
-  push:
+  pull_request:
     branches:
-      - cover-download-test-20260918
+      - main
+    paths:
+      - ".github/workflows/rge-cover-download-test.yml"
 
 jobs:
   test-cover:
@@ -15,6 +17,9 @@ jobs:
           set -euxo pipefail
           mkdir -p out
           curl -fL --retry 2 --connect-timeout 10 --max-time 60 \
+            -H "Referer: https://ediouro-preview.vercel.app/" \
+            -H "Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8" \
+            -H "User-Agent: Mozilla/5.0" \
             "https://simpleset.ediouro.com.br/imagens/capas/PRD//6044ece240884f11ab8c566fab9e0036.jpg" \
             -o out/9786589132912.jpg
           test -s out/9786589132912.jpg
