@@ -71,6 +71,10 @@
    const synopsisPatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/4250f62116f79a129538d2f7f5c0f6b746548087/preview/synopsis-fill-v1.js',{cache:'no-store'});
    if(synopsisPatch.ok)loaded.push(['js',await synopsisPatch.text()]);
   }catch(e){}
+  try{
+   const nfStorePatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/6d6139243a1db70d3081e9cf571744b145455f3f/preview/nf-store-synopsis-v1.js',{cache:'no-store'});
+   if(nfStorePatch.ok)loaded.push(['js',await nfStorePatch.text()]);
+  }catch(e){}
   for(const item of loaded){
    if(!item)continue;
    const [kind,text]=item;
