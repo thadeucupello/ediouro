@@ -1,0 +1,189 @@
+/* Hidden identity study: same site, visibly re-skinned */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap');
+
+:root{
+  --paper:#f5f1ea !important;
+  --paper2:#e8e1d7 !important;
+  --paper3:#fbf8f3 !important;
+  --ink:#171515 !important;
+  --muted:#6f675f !important;
+  --line:#d7cec2 !important;
+  --green:#171717 !important;
+  --gold:#0028ef !important;
+}
+
+body{
+  background:var(--paper)!important;
+  color:var(--ink)!important;
+  font-family:'Poppins',Arial,sans-serif!important;
+}
+button,input,select,textarea,
+.nav,.eyebrow,.link,.chip,.book p,.book small,.story p,.newsletter,.footer{
+  font-family:'Poppins',Arial,sans-serif!important;
+}
+.serif,h1,h2,h3{
+  font-family:'Newsreader',Georgia,serif!important;
+  font-weight:500!important;
+}
+.logo{
+  font-family:'Poppins',Arial,sans-serif!important;
+  font-weight:700!important;
+  letter-spacing:-.045em!important;
+}
+header{
+  background:rgba(245,241,234,.96)!important;
+  border-bottom:1px solid #d7cec2!important;
+}
+.nav a:hover,.top-link:hover,.search-top:hover{
+  color:#0028ef!important;
+}
+.eyebrow{
+  color:#0028ef!important;
+}
+.hero{
+  background:
+    radial-gradient(circle at 82% 18%, rgba(0,40,239,.09), transparent 24%),
+    var(--paper)!important;
+}
+.hero h1{
+  color:#171515!important;
+  font-weight:500!important;
+}
+.hero .lead{
+  font-family:'Newsreader',Georgia,serif!important;
+  color:#5a534c!important;
+}
+.searchbox{
+  border-bottom:2px solid #0028ef!important;
+}
+.searchbox input{
+  font-family:'Newsreader',Georgia,serif!important;
+}
+.searchbox button{
+  background:#0028ef!important;
+  color:#fff!important;
+}
+.examples .chip{
+  background:rgba(255,255,255,.42)!important;
+}
+.examples .chip:hover{
+  border-color:#0028ef!important;
+  color:#0028ef!important;
+}
+.sec-head .link,.link{
+  color:#0028ef!important;
+  border-bottom-color:#0028ef!important;
+}
+.cat.fantasy{
+  background:#0028ef!important;
+}
+.cat.crime{
+  background:#161616!important;
+}
+.cat.romance{
+  background:#ff97d6!important;
+  color:#171515!important;
+}
+.cat h3,.cat p{color:inherit!important}
+.cat strong{font-family:'Newsreader',Georgia,serif!important}
+
+.feature{
+  background:#171717!important;
+  color:#fff!important;
+  position:relative;
+}
+.feature:before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;width:8px;
+  background:#0028ef;
+}
+.feature .eyebrow{color:#91a3ff!important}
+.feature p{color:#d5d0ca!important}
+.feature .cta{
+  border-color:#91a3ff!important;
+  color:#fff!important;
+}
+
+.recess{
+  background:#ebe4da!important;
+}
+.brand-title{
+  color:#171515!important;
+}
+.brand-shelf-native .brand-panel-content .eyebrow{
+  color:inherit!important;
+}
+.brand-shelf-native .brand-panel-content h3{
+  font-family:'Newsreader',Georgia,serif!important;
+  font-weight:500!important;
+}
+.brand-shelf-native .brand-panel-content p,
+.brand-shelf-native .brand-spine span{
+  font-family:'Poppins',Arial,sans-serif!important;
+}
+
+.panorama .series-box{
+  background:#171717!important;
+  color:#fff!important;
+  border-top:8px solid #0028ef!important;
+}
+.panorama .series-box .eyebrow{color:#91a3ff!important}
+
+.story{
+  border-top-color:#cfc5b8!important;
+}
+.story .eyebrow{color:#0028ef!important}
+
+.institutional{
+  background:#0028ef!important;
+  color:#fff!important;
+}
+.institutional .eyebrow{
+  color:#cdd5ff!important;
+}
+.institutional p{
+  color:#eef0ff!important;
+}
+.institutional .newsletter{
+  border-top-color:rgba(255,255,255,.35)!important;
+}
+.institutional .field{
+  color:#e7eaff!important;
+  border-bottom-color:rgba(255,255,255,.55)!important;
+}
+.institutional .cta{
+  background:#fff!important;
+  color:#0028ef!important;
+  border-color:#fff!important;
+}
+
+.footer{
+  background:#111!important;
+}
+.footer h4,.footer a,.footer li{
+  font-family:'Poppins',Arial,sans-serif!important;
+}
+
+.page-hero,
+.catalog-v3-hero{
+  background:linear-gradient(180deg,#fbf8f3 0%,#eee7dc 100%)!important;
+}
+.catalog-v3-title h1,
+.page-hero h1{
+  font-family:'Newsreader',Georgia,serif!important;
+  font-weight:500!important;
+}
+.catalog-v3-search button{
+  background:#0028ef!important;
+  border-color:#0028ef!important;
+  color:#fff!important;
+}
+.catalog-sort-chip.active,
+.catalog-v3-shortcuts>span.active,
+.catalog-v3-shortcuts>span:hover{
+  border-color:#0028ef!important;
+  color:#0028ef!important;
+}
+
+::selection{background:#0028ef;color:#fff}
