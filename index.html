@@ -80,6 +80,22 @@
    if(petraStorePatch.ok)loaded.push(['js',await petraStorePatch.text()]);
   }catch(e){}
   try{
+   const agirStorePatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/8ba4bdb360bc0700a94731e015379575b2116c50/preview/agir-store-synopsis-v1.js',{cache:'no-store'});
+   if(agirStorePatch.ok)loaded.push(['js',await agirStorePatch.text()]);
+  }catch(e){}
+  try{
+   const tramaStorePatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/640fdb13e575d53c4f9fddee40227f2768ab033c/preview/trama-store-synopsis-v1.js',{cache:'no-store'});
+   if(tramaStorePatch.ok)loaded.push(['js',await tramaStorePatch.text()]);
+  }catch(e){}
+  try{
+   const aliceStorePatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/4fc2a0e210748644b96adddc3be7b408e6099cef/preview/alice-store-synopsis-v1.js',{cache:'no-store'});
+   if(aliceStorePatch.ok)loaded.push(['js',await aliceStorePatch.text()]);
+  }catch(e){}
+  try{
+   const pixelStorePatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/88101deda8b932a1ab77c78c240f8a61f584a2a6/preview/pixel-store-synopsis-v1.js',{cache:'no-store'});
+   if(pixelStorePatch.ok)loaded.push(['js',await pixelStorePatch.text()]);
+  }catch(e){}
+  try{
    const educationPatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/cf09948fca26cbb6346595ca4be8215108b3896f/preview/education-v1.js',{cache:'no-store'});
    if(educationPatch.ok)loaded.push(['js',await educationPatch.text()]);
   }catch(e){}
