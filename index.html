@@ -88,7 +88,7 @@
    if(educationResources.ok)loaded.push(['js',await educationResources.text()]);
   }catch(e){}
   try{
-   const coverAuditPatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/2625837c2ca0ebe31f01672e22251251ebfec1ea/preview/cover-audit-client-v1.js',{cache:'no-store'});
+   const coverAuditPatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/8d58ee2987e7fbe773f30516769464f43d424366/preview/cover-audit-client-v1.js',{cache:'no-store'});
    if(coverAuditPatch.ok)loaded.push(['js',await coverAuditPatch.text()]);
   }catch(e){}
   for(const item of loaded){
