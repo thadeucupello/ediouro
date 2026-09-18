@@ -22,7 +22,6 @@
   if(!r.ok)throw new Error('base '+r.status);
   let h=await r.text();
   h=h.replace(oldCover,newCover).replace(oldCatalogCss,newCatalogCss).replace(oldCatalogJs,newCatalogJs);
-  h=h.replace("const assets=[","const assets=[['css','https://raw.githubusercontent.com/thadeucupello/ediouro/8f0b04f20b028a2cc5ef957d2be9bb662f5cb376/preview/brand-shelf-hover-v1.css'],['js','https://raw.githubusercontent.com/thadeucupello/ediouro/06dbf6e0e7a78e328e9cf389c73c75a897100400/preview/brand-shelf-hover-v1.js'],");
   document.open();document.write(h);document.close();
  }catch(e){
   document.getElementById('s').textContent='Não foi possível carregar a prévia. '+e.message;
@@ -37,6 +36,5 @@
 <!-- cover-detail-ratio: 2026-09-18-natural -->
 <!-- list-cover-matte: 2026-09-18-none -->
 <!-- catalog-default-order: newest-first-2026-09-18 -->
-<!-- brand-shelf-hover: asset-pipeline-safe -->
 </body>
 </html>
