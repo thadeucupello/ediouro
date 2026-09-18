@@ -277,3 +277,45 @@
     bottom:22px;
   }
 }
+
+
+/* Persistent slower imprint hover — 2026-09-18 */
+@media(min-width:761px){
+  .brand-shelf-native .brand-panel{
+    transition:flex-basis .68s cubic-bezier(.22,.72,.18,1),flex-grow .68s cubic-bezier(.22,.72,.18,1);
+  }
+  .brand-shelf-native .brand-panel-content{
+    transition:opacity .34s ease .14s,transform .42s ease .10s;
+  }
+  .brand-shelf-native .brand-panel.brand-default,
+  .brand-shelf-native:hover .brand-panel,
+  .brand-shelf-native:hover .brand-panel:hover{
+    flex:0 0 74px;
+    min-width:74px;
+  }
+  .brand-shelf-native .brand-panel.brand-active,
+  .brand-shelf-native:hover .brand-panel.brand-active{
+    flex:1 1 auto;
+    min-width:0;
+  }
+  .brand-shelf-native .brand-panel.brand-default .brand-spine,
+  .brand-shelf-native:hover .brand-panel.brand-default:not(:hover) .brand-spine{
+    opacity:1;
+  }
+  .brand-shelf-native .brand-panel.brand-default .brand-panel-content,
+  .brand-shelf-native:hover .brand-panel.brand-default:not(:hover) .brand-panel-content{
+    opacity:0;
+    transform:translateX(12px);
+    pointer-events:none;
+  }
+  .brand-shelf-native .brand-panel.brand-active .brand-spine,
+  .brand-shelf-native:hover .brand-panel.brand-active .brand-spine{
+    opacity:0;
+  }
+  .brand-shelf-native .brand-panel.brand-active .brand-panel-content,
+  .brand-shelf-native:hover .brand-panel.brand-active .brand-panel-content{
+    opacity:1;
+    transform:none;
+    pointer-events:auto;
+  }
+}
