@@ -8,29 +8,29 @@ function identityHome(){
  const arrivals=get(CUR.arrivals).slice(0,5), reads=get(CUR.reading).slice(0,4), heroBooks=arrivals.slice(0,3), cosmos=get(CUR.cosmere).slice(0,3);
  const brandCards=IMPRINTS.map(im=>{
   const pal=BRAND_SHELF_COLORS[im.slug]||[im.color||'#111','#fff'];
-  return \`<article class="idv-brand" style="--brand:\${pal[0]};--brand-ink:\${pal[1]}" onclick="go('/marcas/\${im.slug}')"><span></span><strong>\${esc(im.name)}</strong><small>\${esc(im.tagline||'')}</small></article>\`
+  return `<article class="idv-brand" style="--brand:${pal[0]};--brand-ink:${pal[1]}" onclick="go('/marcas/${im.slug}')"><span></span><strong>${esc(im.name)}</strong><small>${esc(im.tagline||'')}</small></article>`
  }).join('');
- return \`<main class="identity-lab">
+ return `<main class="identity-lab">
  <style>@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');</style>
  <header class="idv-header"><div class="idv-wrap idv-head-inner"><div class="idv-wordmark" onclick="go('/')">Ediouro</div><nav><span onclick="go('/livros')">Livros</span><span onclick="go('/autores')">Autores</span><span onclick="go('/marcas')">Marcas</span></nav><div class="idv-lab-tag">LAB · identidade V1</div></div></header>
 
  <section class="idv-hero"><div class="idv-wrap idv-hero-grid">
   <div class="idv-hero-copy"><div class="idv-eyebrow">GRUPO EDIOURO · DESDE 1939</div><h1>Todo mundo tem um livro esperando.</h1><p>Uma casa de muitas casas. Literatura, fantasia, comportamento, espiritualidade, passatempos e histórias para começar a ler o mundo.</p><div class="idv-actions"><button onclick="go('/livros')">Explorar catálogo</button><button class="ghost" onclick="go('/')">Ver home atual</button></div></div>
-  <div class="idv-cover-stage"><div class="idv-mark">)</div>\${heroBooks.map((w,i)=>\`<div class="idv-float-cover c\${i+1}" onclick="go('/livros/\${w.slug}')">\${cover(w)}</div>\`).join('')}<div class="idv-color-chip chip-yellow"></div><div class="idv-color-chip chip-pink"></div></div>
+  <div class="idv-cover-stage"><div class="idv-mark">)</div>${heroBooks.map((w,i)=>`<div class="idv-float-cover c${i+1}" onclick="go('/livros/${w.slug}')">${cover(w)}</div>`).join('')}<div class="idv-color-chip chip-yellow"></div><div class="idv-color-chip chip-pink"></div></div>
  </div></section>
 
  <section class="idv-manifesto"><div class="idv-wrap"><div class="idv-manifesto-grid"><div class="idv-bigline">EDITORIAL.<br>CONTEMPORÂNEA.<br>SIMPLES.</div><div><div class="idv-eyebrow">DIREÇÃO DE IDENTIDADE</div><p>Aqui a Poppins assume tudo: navegação, manchetes, textos e chamadas. O azul institucional vira presença de marca, enquanto preto, cinza claro e as cores secundárias entram como ritmo, não como decoração.</p><div class="idv-swatches"><i style="--c:#0028ef"></i><i style="--c:#100e0f"></i><i style="--c:#f0f1f1"></i><i style="--c:#00e868"></i><i style="--c:#ffc501"></i><i style="--c:#ff97d6"></i><i style="--c:#ff4b00"></i></div></div></div></div></section>
 
- <section class="idv-arrivals"><div class="idv-wrap"><div class="idv-section-head"><div><div class="idv-eyebrow">ACABARAM DE CHEGAR</div><h2>Novos livros.<br>Novas obsessões.</h2></div><button onclick="go('/livros')">Ver todos</button></div><div class="idv-book-grid">\${arrivals.map((w,i)=>\`<article class="idv-book" onclick="go('/livros/\${w.slug}')"><div class="idv-book-no">0\${i+1}</div><div class="idv-book-cover">\${cover(w)}</div><h3>\${esc(w.title)}</h3><p>\${esc(authorNames(w)||'Grupo Ediouro')}</p></article>\`).join('')}</div></div></section>
+ <section class="idv-arrivals"><div class="idv-wrap"><div class="idv-section-head"><div><div class="idv-eyebrow">ACABARAM DE CHEGAR</div><h2>Novos livros.<br>Novas obsessões.</h2></div><button onclick="go('/livros')">Ver todos</button></div><div class="idv-book-grid">${arrivals.map((w,i)=>`<article class="idv-book" onclick="go('/livros/${w.slug}')"><div class="idv-book-no">0${i+1}</div><div class="idv-book-cover">${cover(w)}</div><h3>${esc(w.title)}</h3><p>${esc(authorNames(w)||'Grupo Ediouro')}</p></article>`).join('')}</div></div></section>
 
- <section class="idv-banner"><div class="idv-wrap"><div class="idv-banner-card"><div class="idv-banner-copy"><div class="idv-pill">GUIA DE LEITURA</div><h2>Entre no Cosmere<br>sem pedir licença.</h2><p>Mistborn, O Arquivo das Tempestades e outros mundos de Brandon Sanderson em uma rota de leitura que começa por onde você quiser.</p><button onclick="go('/descubra/descubra-o-cosmere')">Descubra o Cosmere</button></div><div class="idv-banner-books">\${cosmos.map(w=>\`<div onclick="go('/livros/\${w.slug}')">\${cover(w)}</div>\`).join('')}</div><div class="idv-banner-symbol">”</div></div></div></section>
+ <section class="idv-banner"><div class="idv-wrap"><div class="idv-banner-card"><div class="idv-banner-copy"><div class="idv-pill">GUIA DE LEITURA</div><h2>Entre no Cosmere<br>sem pedir licença.</h2><p>Mistborn, O Arquivo das Tempestades e outros mundos de Brandon Sanderson em uma rota de leitura que começa por onde você quiser.</p><button onclick="go('/descubra/descubra-o-cosmere')">Descubra o Cosmere</button></div><div class="idv-banner-books">${cosmos.map(w=>`<div onclick="go('/livros/${w.slug}')">${cover(w)}</div>`).join('')}</div><div class="idv-banner-symbol">”</div></div></div></section>
 
- <section class="idv-reading"><div class="idv-wrap"><div class="idv-section-head dark"><div><div class="idv-eyebrow">TODO MUNDO ESTÁ LENDO</div><h2>Livros que já<br>encontraram leitores.</h2></div></div><div class="idv-reading-grid">\${reads.map(w=>\`<article onclick="go('/livros/\${w.slug}')"><div>\${cover(w)}</div><h3>\${esc(w.title)}</h3><p>\${esc(authorNames(w)||'Grupo Ediouro')}</p></article>\`).join('')}</div></div></section>
+ <section class="idv-reading"><div class="idv-wrap"><div class="idv-section-head dark"><div><div class="idv-eyebrow">TODO MUNDO ESTÁ LENDO</div><h2>Livros que já<br>encontraram leitores.</h2></div></div><div class="idv-reading-grid">${reads.map(w=>`<article onclick="go('/livros/${w.slug}')"><div>${cover(w)}</div><h3>${esc(w.title)}</h3><p>${esc(authorNames(w)||'Grupo Ediouro')}</p></article>`).join('')}</div></div></section>
 
- <section class="idv-brands"><div class="idv-wrap"><div class="idv-section-head"><div><div class="idv-eyebrow">SETE MARCAS · UMA EDIOURO</div><h2>Cada catálogo tem<br>seu próprio temperamento.</h2></div></div><div class="idv-brand-grid">\${brandCards}</div></div></section>
+ <section class="idv-brands"><div class="idv-wrap"><div class="idv-section-head"><div><div class="idv-eyebrow">SETE MARCAS · UMA EDIOURO</div><h2>Cada catálogo tem<br>seu próprio temperamento.</h2></div></div><div class="idv-brand-grid">${brandCards}</div></div></section>
 
  <footer class="idv-footer"><div class="idv-wrap"><div class="idv-footer-word">Ediouro</div><p>Laboratório visual interno · rota não publicada na navegação.</p><button onclick="go('/')">Voltar para a home atual</button></div></footer>
- </main>\`;
+ </main>`;
 }
 
 function catalog(params){
