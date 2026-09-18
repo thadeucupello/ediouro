@@ -33,10 +33,13 @@ function brandShelfHover(el){
 }
 function brandShelfTap(ev,el,slug){
  if(window.matchMedia('(max-width:760px)').matches){
+  const shelf=el.parentElement;
   if(!el.classList.contains('mobile-open')){
    ev.stopPropagation();
-   el.parentElement?.querySelectorAll('.brand-panel').forEach(p=>p.classList.remove('mobile-open'));
+   shelf?.classList.add('has-mobile-open');
+   shelf?.querySelectorAll('.brand-panel').forEach(p=>p.classList.remove('mobile-open'));
    el.classList.add('mobile-open');
+   requestAnimationFrame(()=>el.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}));
    return;
   }
  }
