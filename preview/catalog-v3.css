@@ -28,7 +28,7 @@
   background:transparent;
   overflow:visible;
   display:flex;
-  align-items:flex-end;
+  align-items:center;
   justify-content:center;
 }
 .book .book-cover>.cover:not(.placeholder) img{
