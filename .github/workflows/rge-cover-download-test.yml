@@ -11,16 +11,13 @@ jobs:
   test-cover:
     runs-on: ubuntu-latest
     steps:
-      - name: Download one RGE cover
+      - name: Download one RGE cover through São Paulo proxy
         shell: bash
         run: |
           set -euxo pipefail
           mkdir -p out
-          curl -fL --retry 2 --connect-timeout 10 --max-time 60 \
-            -H "Referer: https://ediouro-preview.vercel.app/" \
-            -H "Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8" \
-            -H "User-Agent: Mozilla/5.0" \
-            "https://simpleset.ediouro.com.br/imagens/capas/PRD//6044ece240884f11ab8c566fab9e0036.jpg" \
+          curl -fL --retry 2 --connect-timeout 15 --max-time 90 \
+            "https://wubthvvtncflzkblgtzh.supabase.co/functions/v1/rge-cover-test?key=rge-cover-test-20260918-f72b1c9e" \
             -o out/9786589132912.jpg
           test -s out/9786589132912.jpg
           file out/9786589132912.jpg
