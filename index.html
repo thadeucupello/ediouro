@@ -67,6 +67,10 @@
    const qaPatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/246d521e7930aec1555bc1263791480091caeaa0/preview/qa-nav-series-v1.js',{cache:'no-store'});
    if(qaPatch.ok)loaded.push(['js',await qaPatch.text()]);
   }catch(e){}
+  try{
+   const synopsisPatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/4250f62116f79a129538d2f7f5c0f6b746548087/preview/synopsis-fill-v1.js',{cache:'no-store'});
+   if(synopsisPatch.ok)loaded.push(['js',await synopsisPatch.text()]);
+  }catch(e){}
   for(const item of loaded){
    if(!item)continue;
    const [kind,text]=item;
