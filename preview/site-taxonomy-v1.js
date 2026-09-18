@@ -1,6 +1,7 @@
 (function(){
 const COLLECTION_NAMED_RGE=[["9786586668933","Coleção Milkshake"],["9786586668988","Coleção Milkshake"],["9788582782415","Coleção Haja Vista"],["9788520934999","Coleção Cícero"],["9786556401904","Clássicos de Ouro"],["9786556404028","Clássicos de Ouro"],["9786556401386","Clássicos de Ouro"],["9786581349714","Coleção Milkshake"],["9786581349981","Coleção Milkshake"],["9786556405520","Clássicos de Ouro"],["9786556401287","Clássicos de Ouro"],["9788520947395","Coleção Cícero"],["9788560347810","Coleção Milkshake"],["9786556402284","Clássicos de Ouro"],["9786556400778","Clássicos de Ouro"],["9788582782422","Coleção Haja Vista"],["9786556400594","Coleção Cícero"],["9786583894021","Coleção Haja Vista"],["9786556402512","Clássicos de Ouro"],["9786556403076","Clássicos de Ouro"],["9786556400136","Clássicos de Ouro"],["9786556400259","Clássicos de Ouro"],["9786581349387","Coleção Milkshake"],["9786556400457","Clássicos de Ouro"],["9786551990212","Coleção Milkshake"],["9786556408552","Coleção Jovem Leitor"],["9786556400211","Clássicos de Ouro"],["9786556407036","Clássicos de Ouro"],["9786556407630","Coleção Jovem Leitor"],["9786556400808","Coleção Cícero"],["9786556408941","Clássicos de Ouro"],["9786556401270","Clássicos de Ouro"],["9786583894052","Coleção Haja Vista"],["9786556408248","Clássicos de Ouro"],["9786556402185","Clássicos de Ouro"],["9786556404776","Clássicos de Ouro"],["9786556402529","Clássicos de Ouro"],["9786556400464","Clássicos de Ouro"],["9788520937433","Coleção Cícero"],["9786556403144","Coleção Cícero"],["9786556401614","Clássicos de Ouro"],["9786556408583","Clássicos de Ouro"],["9786581349394","Coleção Milkshake"],["9786586668919","Coleção Milkshake"],["9788520943359","Coleção Cícero"],["9786556406091","Clássicos de Ouro"],["9786556409610","Clássicos de Ouro"],["9786586668841","Coleção Milkshake"],["9786581349400","Coleção Milkshake"],["9786581349554","Coleção Milkshake"],["9786556407623","Coleção Jovem Leitor"],["9786581349431","Coleção Milkshake"],["9786556404592","Clássicos de Ouro"],["9786556401621","Clássicos de Ouro"],["9786586668902","Coleção Milkshake"],["9786556401607","Clássicos de Ouro"],["9786556402055","Clássicos de Ouro"],["9786556406947","Coleção Jovem Leitor"],["9786586668926","Coleção Milkshake"],["9788520941492","Clássicos de Ouro"],["9786581349585","Coleção Milkshake"],["9786581349660","Coleção Milkshake"],["9786556405728","Coleção CPT"],["9786581349578","Coleção Milkshake"],["9786556406978","Clássicos de Ouro"],["9786586668940","Coleção Milkshake"],["9786581349424","Coleção Milkshake"],["9786556405858","Coleção CPT"],["9786556405643","Coleção CPT"],["9786556407074","Clássicos de Ouro"],["9786586668834","Coleção Milkshake"],["9786556405872","Coleção CPT"],["9786556405704","Coleção CPT"],["9786556407654","Coleção Cícero"],["9786556405841","Coleção CPT"],["9786556402062","Clássicos de Ouro"]];
 const COLLECTION_AUTHOR_RGE=[["9788520938393","ARIANO SUASSUNA"],["9786556409412","ARIANO SUASSUNA"],["9788520947210","BERTRAND RUSSELL"],["9786556405094","CARLOS HEITOR CONY"],["9786556409665","ARIANO SUASSUNA"],["9786556401263","RUBEM FONSECA"],["9788520941638","ARIANO SUASSUNA"],["9786556407593","MAYA ANGELOU"],["9786556409740","SIMONE DE BEAUVOIR"],["9788520947326","MAYA ANGELOU"],["9786556401973","EVANILDO BECHARA"],["9786556400587","NELSON RODRIGUES"],["9786556404622","ARIANO SUASSUNA"],["9786556403267","NELSON RODRIGUES"],["9786556400617","CARLOS HEITOR CONY"],["9786556408781","SIMONE DE BEAUVOIR"],["9788520942864","ARIANO SUASSUNA"],["9786556400556","NELSON RODRIGUES"],["9786556401492","RUBEM FONSECA"],["9788520942895","ARIANO SUASSUNA"],["9786556402659","EVANILDO BECHARA"],["9788520945070","CARLOS HEITOR CONY"],["9786556406589","NELSON RODRIGUES"],["9788520943366","RUBEM FONSECA"],["9786556409818","BERTRAND RUSSELL"],["9786556400525","NELSON RODRIGUES"],["9786556400822","NELSON RODRIGUES"],["9786556400785","RUBEM FONSECA"],["9786556402895","NELSON RODRIGUES"],["9786556401508","CARLOS HEITOR CONY"],["9786556405957","SIMONE DE BEAUVOIR"],["9786556407388","SIMONE DE BEAUVOIR"],["9786556408866","EVANILDO BECHARA"],["9786556406909","EVANILDO BECHARA"],["9786556401942","NELSON RODRIGUES"],["9786556404899","EVANILDO BECHARA"],["9786556405940","BERTRAND RUSSELL"],["9788520942888","ARIANO SUASSUNA"],["9786556404646","ARIANO SUASSUNA"],["9786556408491","SIMONE DE BEAUVOIR"],["9788520931158","EVANILDO BECHARA"],["9788520939277","ARIANO SUASSUNA"],["9788520933619","MÁRIO DE ANDRADE"],["9786556401683","RUBEM FONSECA"],["9786556403380","NELSON RODRIGUES"],["9788520933350","NELSON RODRIGUES"],["9786556408507","SIMONE DE BEAUVOIR"],["9786556409368","EVANILDO BECHARA"],["9788520923450","EVANILDO BECHARA"],["9788520944271","ARIANO SUASSUNA"],["9786556400792","NELSON RODRIGUES"],["9786556401911","BERTRAND RUSSELL"],["9786556408392","BERTRAND RUSSELL"],["9786556400754","ARIANO SUASSUNA"],["9786556403403","ARIANO SUASSUNA"],["9786556403274","ARIANO SUASSUNA"],["9786556408675","RUBEM FONSECA"],["9786556409030","SIMONE DE BEAUVOIR"],["9788520944776","ARIANO SUASSUNA"],["9786556403250","EVANILDO BECHARA"],["9786556408682","RUBEM FONSECA"],["9788520940648","CARLOS HEITOR CONY"],["9786556406282","SIMONE DE BEAUVOIR"],["9786556406480","EVANILDO BECHARA"],["9786556409658","RUBEM FONSECA"],["9788520924686","MÁRIO DE ANDRADE"],["9786556401959","ARIANO SUASSUNA"],["9788520923818","MÁRIO DE ANDRADE"],["9788520929919","MÁRIO DE ANDRADE"],["9786556407258","MAYA ANGELOU"],["9788520927793","MÁRIO DE ANDRADE"],["9788520937631","CARLOS HEITOR CONY"],["9786556403908","EVANILDO BECHARA"],["9788520944615","NELSON RODRIGUES"],["9786556403694","RUBEM FONSECA"],["9788520930694","NELSON RODRIGUES"],["9788520933312","MÁRIO DE ANDRADE"],["9786556401966","RUBEM FONSECA"]];
+const COLLECTION_CURATED_OVERRIDES=[["9786556407593","Coleção Maya Angelou","author"],["9786556408408","Coleção Maya Angelou","author"],["9786556406916","Coleção Maya Angelou","author"],["9788520947326","Coleção Maya Angelou","author"]]
 const READING_RGE_RANK=["9788582782408","9786556402581","9786581339180","9786558371458","9788520938393","9786589132684","9786598579982","9786581339197","9786558371878","9786556401287","9786581339203","9786581339210","9786558371243","9786556403083","9786556401386","9786556400136","9786581339333","9786581339128","9788582782170","9786581339067","9786558372226","9788520947289","9786581339098","9786589132714","9788520941638","9786589132943","9786556407074","9786556408866"];
 const digitsV=s=>String(s||'').replace(/\D/g,'');
 const pubDateV=w=>(ED[w.slug]||[]).map(e=>e.publicationDate||'').filter(Boolean).sort().reverse()[0]||'';
@@ -50,10 +51,12 @@ const titleNameV=s=>{
  const particles=new Set(['de','da','do','dos','das','e']);
  return String(s||'').trim().toLocaleLowerCase('pt-BR').split(/\s+/).map((w,i)=>i>0&&particles.has(w)?w:w.charAt(0).toLocaleUpperCase('pt-BR')+w.slice(1)).join(' ');
 };
-const collectionRowsV=[
+const collectionRowsRawV=[
  ...COLLECTION_NAMED_RGE.map(([isbn,name])=>[isbn,name,'named']),
- ...COLLECTION_AUTHOR_RGE.map(([isbn,author])=>[isbn,'Coleção '+titleNameV(author),'author'])
+ ...COLLECTION_AUTHOR_RGE.map(([isbn,author])=>[isbn,'Coleção '+titleNameV(author),'author']),
+ ...COLLECTION_CURATED_OVERRIDES
 ];
+const collectionRowsV=[...new Map(collectionRowsRawV.map(r=>[r[0]+'|'+r[1],r])).values()];
 for(const [isbn,baseName,kind] of collectionRowsV){
  const e=isbnEditionV.get(isbn);if(!e)continue;
  const w=W[e.workSlug];if(!w)continue;
@@ -116,10 +119,14 @@ function readingNowV(){
   const a=authorSlugs(w)[0]||'';
   if(a&&authorsUsed.has(a))continue;
   if((imprintCount[w.imprint]||0)>=2)continue;
-  selected.push(w);seen.add(w.slug);if(a)authorsUsed.add(a);imprintCount[w.imprint]=(imprintCount[w.imprint]||0)+1;
+  selected.push({work:w,edition:e,isbn});seen.add(w.slug);if(a)authorsUsed.add(a);imprintCount[w.imprint]=(imprintCount[w.imprint]||0)+1;
   if(selected.length===6)break;
  }
  return selected;
+}
+function readingCardV(entry){
+ const w=entry.work,e=entry.edition;
+ return '<article class="book" onclick="go(\'/livros/'+w.slug+'?edicao='+encodeURIComponent(e.id)+'\')"><div class="book-cover">'+coverForEdition(w,e)+'</div><h3>'+esc(w.title)+'</h3><p>'+esc(authorNames(w)||'Grupo Ediouro')+'</p><small>'+esc(I[w.imprint]?.name||w.imprint)+'</small></article>';
 }
 
 // Séries: completas e sempre do lançamento mais recente para o mais antigo.
@@ -167,7 +174,7 @@ footer=function(){return footerBeforeCollections().replace('<li onclick="go(\'/s
 const homeBeforeCollections=home;
 home=function(){
  let out=homeBeforeCollections(),read=readingNowV(),top=COLLECTIONS.slice(0,4);
- out=out.replace(/(<section><div class="wrap"><div class="sec-head"><h2>Todo mundo está lendo<\/h2><\/div><div class="shelf">)[\s\S]*?(<\/div><\/div><\/section>)/,'$1'+read.map(bookCard).join('')+'$2');
+ out=out.replace(/(<section><div class="wrap"><div class="sec-head"><h2>Todo mundo está lendo<\/h2><\/div><div class="shelf">)[\s\S]*?(<\/div><\/div><\/section>)/,'$1'+read.map(readingCardV).join('')+'$2');
  if(top.length){
   const block='<section class="home-collections"><div class="wrap"><div class="sec-head"><div><div class="eyebrow">Coleções</div><h2>Nossas coleções</h2></div><div class="link" onclick="go(\'/colecoes\')">Ver todas</div></div><div class="home-collection-grid">'+top.map(c=>'<article onclick="go(\'/colecoes/'+c.slug+'\')"><div class="eyebrow">'+esc(I[c.imprint]?.name||'Ediouro')+'</div><h3>'+esc(c.name)+'</h3><span>'+c.entries.length+' livros →</span></article>').join('')+'</div></div></section>';
   out=out.replace('<section><div class="wrap"><div class="sec-head"><h2>Todo mundo está lendo</h2>',block+'<section><div class="wrap"><div class="sec-head"><h2>Todo mundo está lendo</h2>');
@@ -193,6 +200,8 @@ window.EDIOURO_TAXONOMY_AUDIT={
  stormlight:seriesBooksLatestV(S['arquivo-das-tempestades']).map(w=>w.title),
  mistborn:seriesBooksLatestV(S['mistborn']).map(w=>w.title),
  mistbornWaxWayne:seriesBooksLatestV(S['mistborn-wax-wayne']).map(w=>w.title),
- seriesVisible:DATA.series.filter(s=>seriesBooksLatestV(s).length).map(s=>({slug:s.slug,name:s.name,count:seriesBooksLatestV(s).length}))
+ seriesVisible:DATA.series.filter(s=>seriesBooksLatestV(s).length).map(s=>({slug:s.slug,name:s.name,count:seriesBooksLatestV(s).length})),
+ mayaAngelouCollection:collectionMap.get(slugV('nova-fronteira-Coleção Maya Angelou'))?.entries.map(x=>({isbn:digitsV(x.edition.isbn||x.edition.ean),title:x.work.title}))||[],
+ readingNow:readingNowV().map(x=>({isbn:x.isbn,title:x.work.title,edition:x.edition.label||x.edition.format}))
 };
 })();
