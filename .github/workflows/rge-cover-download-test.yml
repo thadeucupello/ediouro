@@ -1,0 +1,28 @@
+name: RGE cover download test
+
+on:
+  push:
+    branches:
+      - cover-download-test-20260918
+
+jobs:
+  test-cover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download one RGE cover
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p out
+          curl -fL --retry 2 --connect-timeout 10 --max-time 60 \
+            "https://simpleset.ediouro.com.br/imagens/capas/PRD//6044ece240884f11ab8c566fab9e0036.jpg" \
+            -o out/9786589132912.jpg
+          test -s out/9786589132912.jpg
+          file out/9786589132912.jpg
+          ls -lh out/9786589132912.jpg
+      - name: Upload test artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rge-cover-test
+          path: out/9786589132912.jpg
+          if-no-files-found: error
