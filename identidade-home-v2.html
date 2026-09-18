@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ediouro — Home com identidade V2</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#efe9de}
+#site{position:fixed;inset:0;width:100%;height:100%;border:0;background:#efe9de}
+</style>
+</head>
+<body>
+<iframe id="site" src="/#/" title="Ediouro — estudo de identidade"></iframe>
+<script>
+(function(){
+  const iframe=document.getElementById('site');
+  const css=`
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,300;400;500;600&display=swap');
+
+:root{
+  --paper:#efe9de !important;
+  --paper2:#e5ddd1 !important;
+  --paper3:#f8f4ed !important;
+  --ink:#211d19 !important;
+  --muted:#6f675f !important;
+  --line:#d6cec2 !important;
+  --green:#171717 !important;
+  --gold:#0028ef !important;
+}
+
+body{
+  background:var(--paper) !important;
+  color:var(--ink) !important;
+  font-family:'Poppins',Arial,sans-serif !important;
+}
+button,input,select,textarea{
+  font-family:'Poppins',Arial,sans-serif !important;
+}
+.serif,h1,h2,h3{
+  font-family:'Newsreader',Georgia,serif !important;
+}
+.logo{
+  font-family:'Poppins',Arial,sans-serif !important;
+  font-weight:700 !important;
+  letter-spacing:-.045em !important;
+}
+header{
+  background:rgba(239,233,222,.96) !important;
+  border-bottom-color:var(--line) !important;
+}
+.nav a:hover{
+  color:#0028ef !important;
+  text-decoration-color:#0028ef !important;
+}
+.eyebrow{
+  font-family:'Poppins',Arial,sans-serif !important;
+}
+.hero .eyebrow,
+.sec-head .eyebrow,
+.page-hero .eyebrow,
+.catalog-v3-hero .eyebrow{
+  color:#0028ef !important;
+}
+.searchbox button{
+  background:#0028ef !important;
+  color:#fff !important;
+}
+.searchbox{
+  border-bottom-color:#211d19 !important;
+}
+.link{
+  color:#0028ef !important;
+}
+.chip:hover,
+.catalog-v3-shortcuts>span:hover{
+  border-color:#0028ef !important;
+  color:#0028ef !important;
+}
+.recess{
+  background:var(--paper2) !important;
+}
+.institutional{
+  background:#171717 !important;
+  color:#f6f3ed !important;
+  position:relative;
+}
+.institutional:before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:6px;
+  background:#0028ef;
+}
+.institutional .eyebrow{
+  color:#8da0ff !important;
+}
+.institutional p{
+  color:#d7d2ca !important;
+}
+.footer{
+  background:#111 !important;
+}
+.catalog-v3-hero{
+  background:linear-gradient(180deg,#f8f4ed 0%,#ebe4d9 100%) !important;
+}
+.catalog-sort-chip.active,
+.catalog-v3-shortcuts>span.active{
+  border-color:#0028ef !important;
+  color:#0028ef !important;
+}
+.catalog-v3-search button{
+  background:#0028ef !important;
+  border-color:#0028ef !important;
+  color:#fff !important;
+}
+.placement-copy .eyebrow,
+.story .eyebrow{
+  color:#0028ef;
+}
+.brand-shelf-native .brand-panel-content .eyebrow,
+.series-hero .eyebrow{
+  color:inherit !important;
+}
+.brand-shelf-native .brand-panel-content h3,
+.brand-shelf-native .brand-panel-content p{
+  font-family:'Newsreader',Georgia,serif !important;
+}
+.cover img,
+.book-cover>.cover img{
+  background:transparent !important;
+}
+::selection{
+  background:#0028ef;
+  color:#fff;
+}
+`;
+
+  function applyTheme(){
+    try{
+      const d=iframe.contentDocument;
+      if(!d || !d.head || !d.body) return;
+      if(d.getElementById('ediouro-identity-v2-theme')) return;
+      const s=d.createElement('style');
+      s.id='ediouro-identity-v2-theme';
+      s.textContent=css;
+      d.head.appendChild(s);
+    }catch(e){}
+  }
+
+  iframe.addEventListener('load',()=>{
+    let tries=0;
+    const timer=setInterval(()=>{
+      applyTheme();
+      tries++;
+      if(tries>40)clearInterval(timer);
+    },150);
+  });
+
+  setInterval(applyTheme,1200);
+})();
+</script>
+</body>
+</html>
