@@ -97,7 +97,7 @@ function collectionCardV(entry){
  return '<article class="book" onclick="go(\'/livros/'+w.slug+'?edicao='+encodeURIComponent(e.id)+'\')"><div class="book-cover">'+collectionCoverV(entry)+'</div><h3>'+esc(w.title)+'</h3><p>'+esc(authorNames(w)||'Grupo Ediouro')+'</p><small>'+esc(I[w.imprint]?.name||w.imprint)+'</small></article>';
 }
 function collectionsListV(){
- return '<main class="collections-v1"><div class="page-hero"><div class="wrap"><div class="eyebrow">Coleções Ediouro</div><h1>Livros que pertencem juntos.</h1><p>Coleções identificadas a partir da linha editorial do RGE. Quando uma coleção tem edição em capa dura, ela aparece separadamente.</p></div></div><section><div class="wrap"><div class="collections-grid">'+COLLECTIONS.map(c=>{
+ return '<main class="collections-v1"><div class="page-hero"><div class="wrap"><div class="eyebrow">Coleções Ediouro</div><h1>Livros que pertencem juntos.</h1><p>Coleções editoriais que reúnem livros por projeto, autor e acabamento. Edições em capa dura aparecem em agrupamentos próprios.</p></div></div><section><div class="wrap"><div class="collections-grid">'+COLLECTIONS.map(c=>{
   const im=I[c.imprint]||I.trama;
   return '<article class="collection-tile" style="--collection-color:'+im.color+'" onclick="go(\'/colecoes/'+c.slug+'\')"><div class="eyebrow">'+esc(im.name)+(c.hardcover?' · Capa dura':'')+'</div><h2>'+esc(c.baseName)+'</h2><p>'+c.entries.length+' '+(c.entries.length===1?'livro':'livros')+'</p><div class="collection-covers">'+c.entries.slice(0,3).map(collectionCoverV).join('')+'</div><span>Ver coleção →</span></article>'
  }).join('')+'</div></div></section></main>';
