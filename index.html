@@ -25,8 +25,7 @@
   let h=await r.text();
   h=h.replace(oldCover,newCover).replace(oldCatalogCss,newCatalogCss).replace(oldCatalogJs,newCatalogJs);
   h=h.replace('</head>','<link rel="stylesheet" href="'+brandShelfCss+'"></head>');
-  h=h.replace('<!-- brand-shelf-hover: v1-2026-09-18 -->
-</body>','<script src="'+brandShelfJs+'"><\/script></body>');
+  h=h.replace('</body>','<script src="'+brandShelfJs+'"><\\/script></body>');
   document.open();document.write(h);document.close();
  }catch(e){
   document.getElementById('s').textContent='Não foi possível carregar a prévia. '+e.message;
@@ -41,5 +40,6 @@
 <!-- cover-detail-ratio: 2026-09-18-natural -->
 <!-- list-cover-matte: 2026-09-18-none -->
 <!-- catalog-default-order: newest-first-2026-09-18 -->
+<!-- brand-shelf-hover: v1-fixed -->
 </body>
 </html>
