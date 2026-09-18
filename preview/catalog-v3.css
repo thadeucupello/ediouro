@@ -208,35 +208,72 @@
 }
 @media(max-width:760px){
   .brand-shelf-native{
-    height:auto;
+    height:360px;
     overflow-x:auto;
-    gap:10px;
-    scroll-snap-type:x proximity;
+    overflow-y:hidden;
+    gap:4px;
     margin-right:-20px;
     padding-right:20px;
+    -webkit-overflow-scrolling:touch;
   }
   .brand-shelf-native .brand-panel,
-  .brand-shelf-native .brand-panel.brand-default,
-  .brand-shelf-native:hover .brand-panel,
-  .brand-shelf-native:hover .brand-panel:hover{
-    flex:0 0 82vw;
-    min-width:82vw;
+  .brand-shelf-native:hover .brand-panel{
+    flex:0 0 48px;
+    min-width:48px;
     height:360px;
-    scroll-snap-align:start;
   }
-  .brand-shelf-native .brand-spine{
-    display:none;
+  .brand-shelf-native .brand-panel.brand-default,
+  .brand-shelf-native .brand-panel.mobile-open,
+  .brand-shelf-native:hover .brand-panel.mobile-open{
+    flex:0 0 78vw;
+    min-width:78vw;
+  }
+  .brand-shelf-native:has(.mobile-open) .brand-panel.brand-default:not(.mobile-open){
+    flex:0 0 48px;
+    min-width:48px;
+  }
+  .brand-shelf-native .brand-spine,
+  .brand-shelf-native:hover .brand-panel.brand-default:not(:hover) .brand-spine{
+    display:flex;
+    opacity:1;
+  }
+  .brand-shelf-native .brand-panel.brand-default .brand-spine,
+  .brand-shelf-native .brand-panel.mobile-open .brand-spine{
+    opacity:0;
+  }
+  .brand-shelf-native:has(.mobile-open) .brand-panel.brand-default:not(.mobile-open) .brand-spine{
+    opacity:1;
   }
   .brand-shelf-native .brand-panel-content,
-  .brand-shelf-native .brand-panel.brand-default .brand-panel-content,
   .brand-shelf-native:hover .brand-panel.brand-default:not(:hover) .brand-panel-content{
+    opacity:0;
+    transform:translateX(12px);
+    pointer-events:none;
+    padding:24px;
+  }
+  .brand-shelf-native .brand-panel.brand-default .brand-panel-content,
+  .brand-shelf-native .brand-panel.mobile-open .brand-panel-content{
     opacity:1;
     transform:none;
     pointer-events:auto;
-    padding:26px;
+  }
+  .brand-shelf-native:has(.mobile-open) .brand-panel.brand-default:not(.mobile-open) .brand-panel-content{
+    opacity:0;
+    transform:translateX(12px);
+    pointer-events:none;
   }
   .brand-shelf-native .brand-panel-content h3{
-    font-size:34px;
-    max-width:92%;
+    font-size:33px;
+    max-width:94%;
+  }
+  .brand-shelf-native .brand-mini{
+    gap:8px;
+  }
+  .brand-shelf-native .brand-mini .cover{
+    width:62px;
+  }
+  .brand-shelf-native .brand-panel-cta{
+    right:22px;
+    bottom:22px;
   }
 }
