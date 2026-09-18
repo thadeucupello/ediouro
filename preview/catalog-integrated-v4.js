@@ -45,10 +45,27 @@ DATA.works=DATA.works.filter(w=>w.imprint!=='coquetel');
 DATA.editions=DATA.editions.filter(e=>!coquetelSlugs.has(e.workSlug));
 rebuild();
 
-const workByLooseKey=new Map();
+const workCandidates=new Map();
 for(const w of DATA.works){
  const key=(w.imprint||'')+'|'+cleanTitle(w.title);
- if(!workByLooseKey.has(key))workByLooseKey.set(key,w);
+ if(!workCandidates.has(key))workCandidates.set(key,[]);
+ workCandidates.get(key).push(w);
+}
+function workAuthorNames(w){
+ return (w.credits||[]).filter(x=>x.role==='autor').map(x=>norm(C[x.contributor]?.name||x.contributor)).filter(Boolean);
+}
+function chooseCandidate(imprint,title,rawAuthors){
+ const candidates=workCandidates.get(imprint+'|'+cleanTitle(title))||[];
+ if(!candidates.length)return null;
+ const wanted=rawAuthors.map(norm).filter(Boolean);
+ if(!wanted.length)return candidates.length===1?candidates[0]:null;
+ const scored=candidates.map(w=>{
+  const have=workAuthorNames(w);
+  const score=wanted.filter(a=>have.includes(a)).length;
+  return {w,score,have};
+ }).sort((a,b)=>b.score-a.score);
+ if(scored[0]?.score>0)return scored[0].w;
+ return candidates.length===1&&scored[0].have.length===0?scored[0].w:null;
 }
 const editionByIsbn=new Map();
 for(const e of DATA.editions){const k=digits(e.isbn||e.ean);if(k)editionByIsbn.set(k,e)}
@@ -65,13 +82,15 @@ for(const row of source){
  let w=ed?W[ed.workSlug]:null;
 
  if(!w){
-  w=workByLooseKey.get(imprint+'|'+cleanTitle(title))||null;
+  w=chooseCandidate(imprint,title,authors);
  }
  if(!w){
   let ws=slugify(title),i=2;
   while(W[ws])ws=slugify(title)+'-'+i++;
   w={id:'catalog-'+code,slug:ws,title,shortDescription:'',description:[],credits:[],imprint,collections:[],categories:[...categories],subjects:[],featured:[],popularity:50,seoTitle:title+' | Ediouro',seoDescription:''};
-  DATA.works.push(w);W[ws]=w;workByLooseKey.set(imprint+'|'+cleanTitle(title),w);createdWorks++;
+  DATA.works.push(w);W[ws]=w;
+  const wk=imprint+'|'+cleanTitle(title);if(!workCandidates.has(wk))workCandidates.set(wk,[]);workCandidates.get(wk).push(w);
+  createdWorks++;
  }else{
   if(!w.imprint)w.imprint=imprint;
   if((!w.categories||!w.categories.length)&&categories.length)w.categories=[...categories];
@@ -117,6 +136,12 @@ for(const row of source){
 }
 rebuild();
 
+// A obra passa a carregar explicitamente a série definida na base editorial.
+for(const s of DATA.series){
+ s.workSlugs=(s.workSlugs||[]).filter(sl=>W[sl]);
+ for(const sl of s.workSlugs){if(W[sl])W[sl].series=s.slug}
+}
+
 const expected=new Set(source.map(r=>digits(r[0])).filter(Boolean));
 const present=new Set(DATA.editions.map(e=>digits(e.isbn||e.ean)).filter(Boolean));
 const missing=[...expected].filter(x=>!present.has(x));
@@ -127,7 +152,10 @@ window.EDIOURO_CATALOG_AUDIT={
  missingExpectedIsbns:missing,
  forced,
  createdWorks,createdEditions,updatedEditions,linkedAuthors,
- totalWorks:DATA.works.length,totalEditions:DATA.editions.length
+ totalWorks:DATA.works.length,totalEditions:DATA.editions.length,
+ duplicateEditionGroups:Object.values(DATA.editions.reduce((m,e)=>{const k=e.workSlug;(m[k]??=[]).push(e);return m},{})).filter(a=>a.length>1).length,
+ authorCollisionTitles:[...new Set(source.map(r=>imprintCode[r[2]]+'|'+cleanTitle(r[1])))]
+   .filter(k=>{const rs=source.filter(r=>imprintCode[r[2]]+'|'+cleanTitle(r[1])===k);return new Set(rs.map(r=>norm(r[3]))).size>1})
 };
 
 const oldHome=home;
