@@ -16,10 +16,12 @@
   const newCover='https://raw.githubusercontent.com/thadeucupello/ediouro/75899b074c2f6823d0b456e1000dd9c58551a364/preview/covers-v2.js';
   const oldCatalogCss='https://raw.githubusercontent.com/thadeucupello/ediouro/3477e2abbe9049a3385eb419a368862374341def/preview/catalog-v3.css';
   const newCatalogCss='https://raw.githubusercontent.com/thadeucupello/ediouro/107208a1ae6a7d699a7ab4f9713c804f3f17fd16/preview/catalog-v3.css';
+  const oldCatalogJs='https://raw.githubusercontent.com/thadeucupello/ediouro/0505d298ed57ddb534b46dbe0e4408feb9d99e73/preview/catalog-v3.js';
+  const newCatalogJs='https://raw.githubusercontent.com/thadeucupello/ediouro/054195f0dcfe0e7f3c585411fa139ec8cbcb3b28/preview/catalog-v3.js';
   const r=await fetch(source,{cache:'no-store'});
   if(!r.ok)throw new Error('base '+r.status);
   let h=await r.text();
-  h=h.replace(oldCover,newCover).replace(oldCatalogCss,newCatalogCss);
+  h=h.replace(oldCover,newCover).replace(oldCatalogCss,newCatalogCss).replace(oldCatalogJs,newCatalogJs);
   document.open();document.write(h);document.close();
  }catch(e){
   document.getElementById('s').textContent='Não foi possível carregar a prévia. '+e.message;
@@ -33,5 +35,6 @@
 <!-- cover-frame-test: 2026-09-18-center -->
 <!-- cover-detail-ratio: 2026-09-18-natural -->
 <!-- list-cover-matte: 2026-09-18-none -->
+<!-- catalog-default-order: newest-first-2026-09-18 -->
 </body>
 </html>
