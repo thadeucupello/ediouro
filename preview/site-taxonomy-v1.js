@@ -23,10 +23,20 @@ function setSeriesV(slug,name,mainContributor,imprint,description,slugs){
  s.workSlugs=list;
  list.forEach((x,i)=>{if(W[x]){W[x].series=slug;if(!Number.isFinite(W[x].seriesOrder))W[x].seriesOrder=i+1}});
 }
+function workSlugByIsbnV(isbn){
+ const e=isbnEditionV.get(digitsV(isbn));
+ return e&&W[e.workSlug]?e.workSlug:null;
+}
+function seriesMembersV(isbns,fallback=[]){
+ const out=[];
+ for(const isbn of isbns){const s=workSlugByIsbnV(isbn);if(s&&!out.includes(s))out.push(s)}
+ for(const s of fallback){if(W[s]&&!out.includes(s))out.push(s)}
+ return out;
+}
 if(W['mistborn-historia-secreta'])delete W['mistborn-historia-secreta'].series;
-setSeriesV('mistborn','Mistborn — Trilogia Original','brandon-sanderson','trama','A trilogia original de Mistborn: O Império Final, O Poço da Ascensão e O Herói das Eras.',['mistborn-o-imperio-final','mistborn-o-poco-da-ascensao','mistborn-o-heroi-das-eras']);
-setSeriesV('mistborn-wax-wayne','Mistborn — Wax & Wayne','brandon-sanderson','trama','A segunda era de Mistborn, acompanhando Wax e Wayne em uma Scadrial em transformação.',['mistborn-a-liga-da-lei','mistborn-as-sombras-de-si-mesmo','mistborn-os-braceletes-da-perdicao','mistborn-o-metal-perdido']);
-setSeriesV('arquivo-das-tempestades','Os Relatos da Guerra das Tempestades','brandon-sanderson','trama','Roshar é varrido por tempestades que moldam a vida, a guerra e a magia.',['o-caminho-dos-reis','palavras-de-radiancia','sacramentadora','ritmo-da-guerra','vento-e-verdade']);
+setSeriesV('mistborn','Mistborn — Trilogia Original','brandon-sanderson','trama','A trilogia original de Mistborn: O Império Final, O Poço da Ascensão e O Herói das Eras.',seriesMembersV(['9786581339180','9786581339197','9786581339203'],['mistborn-o-imperio-final','mistborn-o-poco-da-ascensao','mistborn-o-heroi-das-eras']));
+setSeriesV('mistborn-wax-wayne','Mistborn — Wax & Wayne','brandon-sanderson','trama','A segunda era de Mistborn, acompanhando Wax e Wayne em uma Scadrial em transformação.',seriesMembersV(['9786581339753','9786581339760','9786581339777','9786581339784'],['mistborn-a-liga-da-lei','mistborn-as-sombras-de-si-mesmo','mistborn-os-braceletes-da-perdicao','mistborn-o-metal-perdido']));
+setSeriesV('arquivo-das-tempestades','Os Relatos da Guerra das Tempestades','brandon-sanderson','trama','Roshar é varrido por tempestades que moldam a vida, a guerra e a magia.',seriesMembersV(['9786589132684','9786589132714','9786589132967','9786581339210'],['o-caminho-dos-reis','palavras-de-radiancia','sacramentadora','ritmo-da-guerra','vento-e-verdade']));
 setSeriesV('bloodsworn','Saga Bloodsworn','john-gwynne','trama','Fantasia épica de inspiração nórdica, com deuses mortos, juramentos e batalhas.',['a-sombra-dos-deuses','a-fome-dos-deuses','a-furia-dos-deuses']);
 setSeriesV('legado-do-ferro-negro','O Legado do Ferro Negro','gareth-hanrahan','trama','A série de fantasia de Gareth Hanrahan ambientada em Guerdon.',['a-oracao-dos-miseraveis','o-santo-das-sombras','o-deus-quebrado']);
 
@@ -159,6 +169,8 @@ window.EDIOURO_TAXONOMY_AUDIT={
  liveCollections:COLLECTIONS.length,
  readingCriterion:'Nielsen média últimos 3 meses; venda interna como desempate; publicados, em estoque, sem kits/merchandising; máximo 1 por autor e 2 por selo',
  stormlight:seriesBooksLatestV(S['arquivo-das-tempestades']).map(w=>w.title),
- mistborn:seriesBooksLatestV(S['mistborn']).map(w=>w.title)
+ mistborn:seriesBooksLatestV(S['mistborn']).map(w=>w.title),
+ mistbornWaxWayne:seriesBooksLatestV(S['mistborn-wax-wayne']).map(w=>w.title),
+ seriesVisible:DATA.series.filter(s=>seriesBooksLatestV(s).length).map(s=>({slug:s.slug,name:s.name,count:seriesBooksLatestV(s).length}))
 };
 })();
