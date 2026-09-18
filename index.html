@@ -63,6 +63,10 @@
    const formatPatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/1fee7dd2895992a3e175ac88c4c5f80918b3202d/preview/formats-ebooks-v1.js',{cache:'no-store'});
    if(formatPatch.ok)loaded.push(['js',await formatPatch.text()]);
   }catch(e){}
+  try{
+   const qaPatch=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/246d521e7930aec1555bc1263791480091caeaa0/preview/qa-nav-series-v1.js',{cache:'no-store'});
+   if(qaPatch.ok)loaded.push(['js',await qaPatch.text()]);
+  }catch(e){}
   for(const item of loaded){
    if(!item)continue;
    const [kind,text]=item;
