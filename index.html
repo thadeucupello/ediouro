@@ -51,7 +51,12 @@
    ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/40f09189ec7d26f4e9795d2e302d87a8ad3bf7cc/preview/authors-b2b-reconcile-v1.js']
   ];
   const loaded=await Promise.all(assets.map(async([kind,url])=>{
-   try{const r=await fetch(url,{cache:'force-cache'});return r.ok?[kind,await r.text()]:null}catch(_){return null}
+   const required=/catalog-b2b-rge-data-v3|catalog-b2b-rge-core-v2|authors-b2b-reconcile-v1/.test(url);
+   try{
+    const r=await fetch(url,{cache:'force-cache'});
+    if(!r.ok){if(required)throw new Error('catálogo '+r.status);return null}
+    return [kind,await r.text()]
+   }catch(e){if(required)throw e;return null}
   }));
   for(const item of loaded){
    if(!item)continue;
