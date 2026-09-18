@@ -136,10 +136,21 @@ for(const row of source){
 }
 rebuild();
 
-// A obra passa a carregar explicitamente a série definida na base editorial.
+// Reconcilia série nos dois sentidos: a lista editorial informa a obra,
+// e obras que já trazem series/seriesOrder voltam para a lista da série.
 for(const s of DATA.series){
- s.workSlugs=(s.workSlugs||[]).filter(sl=>W[sl]);
- for(const sl of s.workSlugs){if(W[sl])W[sl].series=s.slug}
+ const listed=(s.workSlugs||[]).filter(sl=>W[sl]);
+ for(const sl of listed){if(W[sl])W[sl].series=s.slug}
+ const seen=new Set(listed);
+ const extras=DATA.works.filter(w=>w.series===s.slug&&!seen.has(w.slug)).sort((a,b)=>{
+  const ao=Number.isFinite(a.seriesOrder)?a.seriesOrder:999;
+  const bo=Number.isFinite(b.seriesOrder)?b.seriesOrder:999;
+  if(ao!==bo)return ao-bo;
+  const ad=(ED[a.slug]||[]).map(e=>e.publicationDate||'').filter(Boolean).sort()[0]||'9999';
+  const bd=(ED[b.slug]||[]).map(e=>e.publicationDate||'').filter(Boolean).sort()[0]||'9999';
+  return ad.localeCompare(bd)||a.title.localeCompare(b.title,'pt-BR');
+ });
+ s.workSlugs=[...listed,...extras.map(w=>w.slug)];
 }
 
 const expected=new Set(source.map(r=>digits(r[0])).filter(Boolean));
