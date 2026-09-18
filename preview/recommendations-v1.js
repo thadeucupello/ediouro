@@ -30,15 +30,19 @@ function recencyBoostRec(w){
  if(y===2023)return 2;
  return 0;
 }
+function collectionKeysRec(w){
+ const e=principal(w);
+ return (e&&window.EDIOURO_EDITION_COLLECTIONS?.[e.id])||[];
+}
 function relatedBooksV1(w,limit=5){
  const seriesShown=w.series&&S[w.series]?.workSlugs?.length>1;
- const universe=universeRec(w),authors=authorSlugs(w),collections=w.collections||[],cats=w.categories||[],subjects=w.subjects||[];
+ const universe=universeRec(w),authors=authorSlugs(w),collections=collectionKeysRec(w),cats=w.categories||[],subjects=w.subjects||[];
  return DATA.works
   .filter(x=>x.slug!==w.slug)
   .filter(x=>!(seriesShown&&x.series===w.series))
   .map(x=>{
    let score=0;
-   const xu=universeRec(x),xa=authorSlugs(x),xc=x.collections||[],xcat=x.categories||[],xsub=x.subjects||[];
+   const xu=universeRec(x),xa=authorSlugs(x),xc=collectionKeysRec(x),xcat=x.categories||[],xsub=x.subjects||[];
    if(universe&&xu&&universe===xu&&x.series!==w.series)score+=70;
    if(collections.length&&sameAny(collections,xc))score+=50;
    if(authors.length&&sameAny(authors,xa))score+=40;
