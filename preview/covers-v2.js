@@ -1,5 +1,27 @@
 (function(){
 const EDIOURO_COVER_BASE='https://wubthvvtncflzkblgtzh.supabase.co/storage/v1/object/public/catalog-covers/';
+const EDIOURO_CATALOG_FIXES={
+  'E do meio do mundo prostituto só amores guardei ao meu charuto':{
+    isbn:'9788520929964',
+    author:'Rubem Fonseca'
+  }
+};
+for(const [title,fix] of Object.entries(EDIOURO_CATALOG_FIXES)){
+  const work=(DATA.works||[]).find(w=>String(w?.title||'').trim()===title);
+  if(!work)continue;
+  for(const e of (DATA.editions||[]).filter(e=>e.workSlug===work.slug)){
+    e.isbn=fix.isbn;
+    e.ean=fix.isbn;
+    e.source={...(e.source||{}),sku:fix.isbn,catalogCorrection:'2026-09-18'};
+  }
+  const contributor=(DATA.contributors||[]).find(x=>String(x?.name||'').trim().toLocaleLowerCase('pt-BR')===fix.author.toLocaleLowerCase('pt-BR'));
+  if(contributor){
+    work.credits=work.credits||[];
+    if(!work.credits.some(x=>x?.role==='autor'&&x?.contributor===contributor.slug)){
+      work.credits.push({contributor:contributor.slug,role:'autor'});
+    }
+  }
+}
 function ediouroCatalogCoverKey(value){
   return String(value||'').replace(/\D/g,'');
 }
