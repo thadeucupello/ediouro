@@ -413,6 +413,77 @@ function patchBrandPages(){
   }
 }
 
+
+function patchAboutPage(){
+  if(typeof aboutPage!=='function')return;
+  const before=aboutPage;
+  aboutPage=function(){
+    const html=before();if(mode!=='cms'||!cmsData?.routes?.sobre)return html;
+    const cfg=cmsData.routes.sobre,f=cfg.fields||{},rep=cfg.repeaters||{};
+    const doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+    const set=(sel,val)=>{if(val===undefined||val===null||val==='')return;const el=main.querySelector(sel);if(el)el.textContent=val;};
+    set('.about-v3-hero .eyebrow',f.hero_eyebrow);set('.about-v3-hero h1',f.hero_title);set('.about-v3-hero p',f.hero_intro);
+    const intro=main.querySelector('.about-v3-intro');if(intro){const e=intro.querySelector('.eyebrow'),h=intro.querySelector('h2'),copy=intro.querySelector('.copy');if(e&&f.who_eyebrow)e.textContent=f.who_eyebrow;if(h&&f.who_title)h.textContent=f.who_title;if(copy&&f.who_body)copy.innerHTML='<p>'+esc(f.who_body)+'</p>';}
+    const history=main.querySelector('.about-history');if(history){const e=history.querySelector('.eyebrow'),h=history.querySelector('h2');if(e&&f.history_eyebrow)e.textContent=f.history_eyebrow;if(h&&f.history_title)h.textContent=f.history_title;const tl=history.querySelector('.about-timeline');if(tl&&Array.isArray(rep.timeline)&&rep.timeline.length)tl.innerHTML=rep.timeline.map(x=>'<article class="about-milestone"><div class="year">'+esc(x.year||'')+'</div><h3>'+esc(x.title||'')+'</h3><p>'+esc(x.text||'')+'</p></article>').join('');}
+    const system=main.querySelector('.about-system');if(system){const sec=system.closest('section'),e=sec?.querySelector('.sec-head .eyebrow'),h=sec?.querySelector('.sec-head h2');if(e&&f.structure_eyebrow)e.textContent=f.structure_eyebrow;if(h&&f.structure_title)h.textContent=f.structure_title;if(Array.isArray(rep.structure)&&rep.structure.length)system.innerHTML=rep.structure.map((x,i)=>'<article class="about-system-card"><div class="num">'+String(i+1).padStart(2,'0')+'</div><div><h3>'+esc(x.title||'')+'</h3><p>'+esc(x.text||'')+'</p></div></article>').join('');}
+    const brands=main.querySelector('.about-brands-v3')?.closest('section');if(brands){const e=brands.querySelector('.sec-head .eyebrow'),h=brands.querySelector('.sec-head h2');if(e&&f.brands_eyebrow)e.textContent=f.brands_eyebrow;if(h&&f.brands_title)h.textContent=f.brands_title;}
+    const actions=main.querySelector('.about-actions');if(actions){const h=actions.querySelector('h2');if(h&&f.continue_title)h.textContent=f.continue_title;const links=actions.querySelector('.about-action-links');if(links&&Array.isArray(rep.links)&&rep.links.length)links.innerHTML=rep.links.map(x=>'<div class="about-action-link" onclick="go('+JSON.stringify(String(x.url||'/'))+')">'+esc(x.label||'')+'</div>').join('');}
+    return main.outerHTML;
+  };
+}
+function patchEducationPages(){
+  if(typeof educationPage==='function'){
+    const before=educationPage;
+    educationPage=function(params){
+      const html=before(params);if(mode!=='cms'||!cmsData?.routes?.educacao)return html;
+      const cfg=cmsData.routes.educacao,f=cfg.fields||{},rep=cfg.repeaters||{};
+      const doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const set=(root,sel,val)=>{if(val===undefined||val===null||val==='')return;const el=root.querySelector(sel);if(el)el.textContent=val;};
+      const hero=main.querySelector('.edu-hero');if(hero){set(hero,'.eyebrow',f.hero_eyebrow);set(hero,'h1',f.hero_title);set(hero,'p',f.hero_intro);const a=hero.querySelector('.edu-hero-actions .cta'),b=hero.querySelector('.edu-hero-actions .link');if(a&&f.primary_cta)a.textContent=f.primary_cta;if(b&&f.secondary_cta)b.textContent=f.secondary_cta;}
+      const stages=main.querySelector('.edu-stage-grid')?.closest('section');if(stages){set(stages,'.sec-head .eyebrow',f.stages_eyebrow);set(stages,'.sec-head h2',f.stages_title);set(stages,'.edu-stage-note',f.stages_note);}
+      const vals=main.querySelector('.edu-values');if(vals){set(vals,'.sec-head .eyebrow',f.values_eyebrow);set(vals,'.sec-head h2',f.values_title);const grid=vals.querySelector('.edu-values-grid');if(grid&&Array.isArray(rep.values)&&rep.values.length)grid.innerHTML=rep.values.map(x=>'<article><h3>'+esc(x.title||'')+'</h3><p>'+esc(x.text||'')+'</p></article>').join('');}
+      const downs=main.querySelector('.edu-downloads');if(downs){set(downs,'.sec-head h2',f.catalogs_title);const grid=downs.querySelector('.edu-download-grid');if(grid&&Array.isArray(rep.catalogs)&&rep.catalogs.length)grid.innerHTML=rep.catalogs.map((c,i)=>'<article class="edu-download-card edu-download-card-'+(i+1)+'"><div class="edu-download-art" aria-hidden="true"><span>Ediouro<br>Educação</span><strong>'+esc((c.kicker||'CATÁLOGO').toUpperCase())+'</strong></div><div class="edu-download-copy"><div class="eyebrow">'+esc(c.kicker||'')+'</div><h3>'+esc(c.label||'')+'</h3><p>'+esc(c.text||'')+'</p><a class="edu-external-cta" href="'+esc(c.url||'#')+'" target="_blank" rel="noopener noreferrer">Baixar catálogo <span>↗</span></a></div></article>').join('');}
+      return main.outerHTML;
+    };
+  }
+  if(typeof educationArchivePage==='function'){
+    const beforeArchive=educationArchivePage;
+    educationArchivePage=function(params){
+      const html=beforeArchive(params);if(mode!=='cms'||!cmsData?.routes?.['educacao-acervo'])return html;
+      const f=cmsData.routes['educacao-acervo'].fields||{},doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const set=(sel,val)=>{if(val===undefined||val===null||val==='')return;const el=main.querySelector(sel);if(el)el.textContent=val;};
+      set('.edu-back',f.back_label);set('.edu-archive-hero .eyebrow',f.eyebrow);set('.edu-archive-title h1',f.title);set('.edu-archive-title p',f.intro);
+      set('.edu-archive-filter-head .eyebrow',f.filter_eyebrow);
+      const first=main.querySelector('.edu-archive-chip');if(first&&f.all_label){const span=first.querySelector('span')?.outerHTML||'';first.innerHTML=esc(f.all_label)+' '+span;}
+      const label=main.querySelector('.edu-archive-search label');if(label&&f.search_label)label.textContent=f.search_label;
+      const input=main.querySelector('.edu-archive-search input');if(input&&f.search_placeholder)input.placeholder=f.search_placeholder;
+      const empty=main.querySelector('#eduArchiveEmpty');if(empty&&f.empty_text)empty.textContent=f.empty_text;
+      return main.outerHTML;
+    };
+  }
+}
+function patchSupportPages(){
+  if(typeof supportPage!=='function')return;
+  const before=supportPage;
+  supportPage=function(type){
+    const html=before(type),cfg=mode==='cms'?cmsData?.routes?.[type]:null;if(!cfg)return html;
+    const f=cfg.fields||{},rep=cfg.repeaters||{},doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+    const set=(root,sel,val)=>{if(val===undefined||val===null||val==='')return;const el=root.querySelector(sel);if(el)el.textContent=val;};
+    const hero=main.querySelector('.support-hero');if(hero){set(hero,'.eyebrow',f.hero_eyebrow);set(hero,'h1',f.hero_title);set(hero,'p',f.hero_intro);}
+    const intro=main.querySelector('.support-intro-row');if(intro){set(intro,'.eyebrow',f.section_eyebrow);set(intro,'h2',f.section_title);const ps=[...intro.querySelectorAll('p')];if(ps.length&&f.section_body)ps[ps.length-1].textContent=f.section_body;}
+    const grid=main.querySelector('.support-contact-grid');
+    if(grid&&Array.isArray(rep.contacts)&&rep.contacts.length){
+      grid.innerHTML=rep.contacts.map(c=>{
+        if(c.email&&typeof supportEmailCard==='function')return supportEmailCard(c.eyebrow||'',c.title||'',c.text||'',c.email||'',c.subject||'');
+        const url=c.url||'';return '<article class="support-contact-card '+(url?'support-card-link':'')+'" '+(url?'onclick="window.open('+JSON.stringify(url)+',\'_blank\')"':'')+'><div><div class="eyebrow">'+esc(c.eyebrow||'')+'</div><h3>'+esc(c.title||'')+'</h3><p>'+esc(c.text||'')+'</p></div>'+(c.cta_label?'<div class="support-email-cta"><span>'+esc(c.cta_label)+'</span><span>→</span></div>':'')+'</article>';
+      }).join('');
+    }
+    const note=main.querySelector('.support-note');if(note&&Array.isArray(rep.notes)&&rep.notes.length)note.innerHTML=rep.notes.map(n=>'<div><strong>'+esc(n.title||'')+(n.title?':':'')+'</strong> '+esc(n.text||'')+'</div>').join('');
+    const bottom=main.querySelector('.support-bottom-grid');if(bottom){set(bottom,'.eyebrow',f.bottom_eyebrow);set(bottom,'h3',f.bottom_title);set(bottom,'p',f.bottom_body);if(Array.isArray(rep.links)&&rep.links.length){const existing=bottom.children[1];if(existing)existing.outerHTML=typeof supportNavLinks==='function'?supportNavLinks(rep.links.map(x=>[x.label,x.url])):'<div class="support-links">'+rep.links.map(x=>'<div class="support-link" onclick="go('+JSON.stringify(String(x.url||'/'))+')"><span>'+esc(x.label||'')+'</span><span>→</span></div>').join('')+'</div>';}}
+    return main.outerHTML;
+  };
+}
+
 async function boot(){
   try{
     if(mode==='shadow'){
@@ -421,7 +492,7 @@ async function boot(){
     }
     const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),8000);let r;try{r=await fetch('/api/cms',{cache:'no-cache',signal:controller.signal});}finally{clearTimeout(timer)}if(!r.ok)throw new Error('CMS bridge '+r.status);
     const data=await r.json();if(!data?.ok)throw new Error('CMS payload inválido');
-    applyCms(data);patchBookPage();patchHomePage();patchDiscoverPages();patchAuthorsPages();patchBrandPages();patchRouter();
+    applyCms(data);patchBookPage();patchHomePage();patchDiscoverPages();patchAuthorsPages();patchBrandPages();patchAboutPage();patchEducationPages();patchSupportPages();patchRouter();
     window.EDIOURO_CMS_SYNC={status:'cms-ready',mode,version:data.version,source:data.source,books:(data.books||[]).length,collections:cmsCollections.length,series:(data.series||[]).filter(x=>x.entityType!=='colecao').length,checkedAt:new Date().toISOString()};
   }catch(err){
     console.warn('[Ediouro CMS] fallback para o site estático:',err);
