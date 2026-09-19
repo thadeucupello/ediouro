@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ediouro — Home identidade V4</title>
+<style>html,body{margin:0;background:#F7F5EF;color:#171515;font:14px system-ui}#s{min-height:100vh;display:grid;place-items:center;opacity:.6}</style>
+</head>
+<body>
+<div id="s">Carregando estudo de identidade…</div>
+<script>
+(async()=>{
+ try{
+  const source='https://raw.githubusercontent.com/thadeucupello/ediouro/79160aa2cb932ff2fcc7d956e6175d57f7ecf4b7/index.html';
+  const oldCover='https://raw.githubusercontent.com/thadeucupello/ediouro/d4c17f80a03c268f4337f6d5930d9ab92f5f8539/preview/covers-v2.js';
+  const newCover='https://raw.githubusercontent.com/thadeucupello/ediouro/75899b074c2f6823d0b456e1000dd9c58551a364/preview/covers-v2.js';
+  const oldCatalogCss='https://raw.githubusercontent.com/thadeucupello/ediouro/3477e2abbe9049a3385eb419a368862374341def/preview/catalog-v3.css';
+  const newCatalogCss='https://raw.githubusercontent.com/thadeucupello/ediouro/ce7b1c480bd3520f92376bc33dc884af0a99e45b/preview/catalog-v3.css';
+  const oldCatalogJs='https://raw.githubusercontent.com/thadeucupello/ediouro/0505d298ed57ddb534b46dbe0e4408feb9d99e73/preview/catalog-v3.js';
+  const newCatalogJs='https://raw.githubusercontent.com/thadeucupello/ediouro/054195f0dcfe0e7f3c585411fa139ec8cbcb3b28/preview/catalog-v3.js';
+  const oldPcpBase='https://raw.githubusercontent.com/thadeucupello/ediouro/8bdbc6d00024aa4b4cff88784ad4ee750192f577/preview/pcp-v2/';
+  const newPcpBase='https://raw.githubusercontent.com/thadeucupello/ediouro/ce7b1c480bd3520f92376bc33dc884af0a99e45b/preview/pcp-v2/';
+  const theme='https://raw.githubusercontent.com/thadeucupello/ediouro/12e48f86e8564c310e9aa68405b62961bfe0c6f2/preview/identity-home-v4.css';
+
+  const r=await fetch(source,{cache:'no-store'});
+  if(!r.ok)throw new Error('base '+r.status);
+  let h=await r.text();
+
+  h=h.replace(oldCover,newCover)
+     .replace(oldCatalogCss,newCatalogCss)
+     .replace(oldCatalogJs,newCatalogJs)
+     .replace(oldPcpBase,newPcpBase);
+
+  const assetAnchor="   ['js','https://raw.githubusercontent.com/thadeucupello/ediouro/a8237fd54d57602eaf0caeb1c771b1a5746216a0/preview/home-interest-nav-v1.js'],";
+  if(!h.includes(assetAnchor))throw new Error('ponto de tema não encontrado');
+  h=h.replace(assetAnchor,assetAnchor+"\n   ['css','"+theme+"'],");
+
+  document.open();document.write(h);document.close();
+ }catch(e){
+  document.getElementById('s').textContent='Não foi possível carregar o estudo. '+e.message;
+ }
+})();
+</script>
+</body>
+</html>
