@@ -217,6 +217,7 @@ async function sync(){
   if(!data?.ok||!Array.isArray(data.books))throw new Error('payload CMS inválido');
 
   // ISBN é a âncora segura: mantém as URLs que o preview já usa.
+  const staticWorksSnapshot=(DATA.works||[]).map(w=>({slug:w.slug,title:w.title}));
   const staticByIsbn=new Map();
   for(const e of DATA.editions||[]){
     const k=digits(e.isbn||e.ean);
@@ -250,6 +251,14 @@ async function sync(){
   // Para qualquer livro presente no WordPress, removemos os formatos herdados
   // do preview e usamos somente os formatos cadastrados no CMS.
   const cmsTargets=new Set(data.books.map(b=>mapSlug(b.slug,slugMap)));
+  const orphanStatic=staticWorksSnapshot.filter(w=>!cmsTargets.has(w.slug));
+  window.EDIOURO_CMS_CATALOG_AUDIT={
+    staticWorks:staticWorksSnapshot.length,cmsBooks:data.books.length,
+    mappedCmsBooks:cmsTargets.size,orphanCount:orphanStatic.length,orphans:orphanStatic
+  };
+  try{
+    fetch('/api/audit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(window.EDIOURO_CMS_CATALOG_AUDIT),keepalive:true}).catch(()=>{});
+  }catch(_){}
   DATA.editions=(DATA.editions||[]).filter(e=>!cmsTargets.has(e.workSlug));
   for(const b of data.books){
     const target=mapSlug(b.slug,slugMap);
