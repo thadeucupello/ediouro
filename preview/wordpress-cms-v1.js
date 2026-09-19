@@ -171,7 +171,7 @@ async function boot(){
       const r=await fetch('/api/cms?summary=1',{cache:'no-cache'});if(!r.ok)throw new Error('CMS bridge '+r.status);
       const audit=await r.json();window.EDIOURO_CMS_SYNC={status:'shadow-ready',mode,...audit,checkedAt:new Date().toISOString()};return;
     }
-    const r=await fetch('/api/cms',{cache:'no-cache'});if(!r.ok)throw new Error('CMS bridge '+r.status);
+    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),8000);let r;try{r=await fetch('/api/cms',{cache:'no-cache',signal:controller.signal});}finally{clearTimeout(timer)}if(!r.ok)throw new Error('CMS bridge '+r.status);
     const data=await r.json();if(!data?.ok)throw new Error('CMS payload inválido');
     applyCms(data);patchBookPage();patchRouter();
     window.EDIOURO_CMS_SYNC={status:'cms-ready',mode,version:data.version,source:data.source,books:(data.books||[]).length,collections:cmsCollections.length,series:(data.series||[]).filter(x=>x.entityType!=='colecao').length,checkedAt:new Date().toISOString()};
@@ -183,10 +183,7 @@ async function boot(){
 window.ediouroCmsBootstrap=function(){if(!bootPromise)bootPromise=boot();return bootPromise;};
 if(mode==='cms'){
   const startCms=()=>{
-    const controller=new AbortController();
-    const timer=setTimeout(()=>controller.abort(),8000);
     window.ediouroCmsBootstrap().finally(()=>{
-      clearTimeout(timer);
       if(window.EDIOURO_CMS_SYNC?.status==='cms-ready'&&typeof router==='function'){
         try{router();}catch(e){console.warn('[Ediouro CMS] rerender falhou',e)}
       }
