@@ -87,7 +87,7 @@ function editionFromFormat(b,f,index,targetSlug){
     currency:'BRL',credits:[],displayPriority:1000-index,
     retailerLinks:(f.retailers||[]).filter(r=>r&&r.url).map(r=>({name:r.name||r.key||'Loja',url:r.url,key:r.key||''})),
     availabilityNote:f.availability_note||'',digitalFormat:f.digital_format||'',
-    duration:f.duration||'',narrator:f.narrator||''
+    duration:f.duration||'',narrator:f.narrator||'',cmsManaged:true
   };
 }
 function authorFromCms(a){
@@ -117,6 +117,93 @@ function articleFromCms(p,slugMap){
     relatedSeries:p.relatedSeries||[],publishedAt:p.publishedAt||'',
     readingTime:Number(p.readingTime||0),featured:!!p.featured,seo:p.seo||{},
     source:{system:'wordpress-cms'}
+  };
+}
+
+
+function installCmsCommerceRenderer(){
+  if(typeof bookPage!=='function'||window.__EDIOURO_CMS_COMMERCE_PATCHED)return;
+  window.__EDIOURO_CMS_COMMERCE_PATCHED=true;
+  const before=bookPage;
+  const label=t=>({'brochura':'Brochura','capa-dura':'Capa dura','livro-digital':'Livro digital','audiolivro':'Audiolivro'}[t]||t||'Edição');
+  const status=s=>({'em-catalogo':'Em catálogo','pre-venda':'Pré-venda','lancamento-futuro':'Lançamento futuro','indisponivel':'Indisponível'}[s]||s||'—');
+  bookPage=function(slug,params){
+    let html=before(slug,params);
+    const w=typeof W!=='undefined'?W[slug]:null;
+    if(!w)return html;
+    const eds=(typeof ED!=='undefined'&&ED[slug])||[];
+    if(!eds.some(e=>e.cmsManaged))return html;
+
+    const requested=params?.get?.('edicao')||'';
+    const ebookMode=params?.get?.('formato')==='ebook';
+    let ed=eds.find(e=>e.id===requested);
+    if(!ed&&ebookMode)ed=eds.find(e=>e.format==='livro-digital');
+    if(!ed)ed=(typeof principal==='function'?principal(w):null)||eds[0]||null;
+    if(!ed)return html;
+
+    const doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');
+    if(!main)return html;
+
+    // Formatos visíveis = exatamente os formatos do WordPress.
+    const tabs=main.querySelector('.editions');
+    if(tabs){
+      tabs.innerHTML=eds.map(e=>
+        '<button class="ed '+(e.id===ed.id?'active':'')+'" onclick="selectEdition('+JSON.stringify(slug)+','+JSON.stringify(e.id)+')">'+
+        esc(e.label||label(e.format))+'<small>'+(typeof money==='function'&&e.price!=null?money(e.price):'')+'</small></button>'
+      ).join('');
+    }
+    const editionLabel=main.querySelector('.edition-label');
+    if(editionLabel)editionLabel.textContent='ESCOLHA O FORMATO';
+
+    // Onde comprar = somente links cadastrados no CMS. Nada de URL inventada.
+    const links=Array.isArray(ed.retailerLinks)?ed.retailerLinks.filter(x=>x&&x.url):[];
+    const retailTitle=main.querySelector('.retail-title');
+    const retailGrid=main.querySelector('.retail-grid');
+    if(retailTitle&&retailGrid){
+      if(links.length){
+        retailTitle.textContent=ed.format==='livro-digital'?'ONDE COMPRAR O E-BOOK':'ONDE COMPRAR';
+        retailTitle.style.display='';
+        retailGrid.style.display='';
+        retailGrid.innerHTML=links.map(x=>
+          '<div class="retail" onclick="window.open('+JSON.stringify(x.url)+',\'_blank\')">'+esc(x.name||x.key||'Loja')+' <span>↗</span></div>'
+        ).join('');
+      }else{
+        retailTitle.style.display='none';
+        retailGrid.innerHTML='';
+        retailGrid.style.display='none';
+      }
+    }
+    main.querySelectorAll('.ebook-note,.ebook-status').forEach(x=>x.remove());
+
+    // Ficha técnica também vem do formato CMS selecionado.
+    const meta=main.querySelector('.meta-grid');
+    if(meta){
+      const left=[['Formato',ed.label||label(ed.format)]];
+      if(ed.format==='livro-digital'){
+        if(ed.digitalFormat)left.push(['Arquivo',ed.digitalFormat]);
+      }else if(ed.format==='audiolivro'){
+        if(ed.duration)left.push(['Duração',ed.duration]);
+        if(ed.narrator)left.push(['Narração',ed.narrator]);
+      }else{
+        if(ed.pageCount)left.push(['Páginas',ed.pageCount]);
+      }
+      if(ed.isbn)left.push(['ISBN',ed.isbn]);
+      const right=[];
+      if(!['livro-digital','audiolivro'].includes(ed.format)){
+        if(ed.binding)right.push(['Acabamento',ed.binding]);
+        if(ed.dimensions)right.push(['Dimensões',ed.dimensions]);
+      }
+      right.push(['Status',status(ed.status)]);
+      if(ed.ean&&ed.ean!==ed.isbn)right.push(['EAN',ed.ean]);
+      const col=rows=>'<div>'+rows.map(([k,v])=>'<div class="meta-row"><span>'+esc(k)+'</span><strong>'+esc(String(v||'—'))+'</strong></div>').join('')+'</div>';
+      meta.innerHTML=col(left)+col(right);
+    }
+    const price=main.querySelector('.price');
+    if(price){
+      price.innerHTML='<span style="display:block;font:700 9px/1.2 \'Archivo\',Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#7c736b;margin-bottom:5px">Preço sugerido</span>'+
+        ((typeof money==='function'&&ed.price!=null)?money(ed.price):'—');
+    }
+    return main.outerHTML;
   };
 }
 
@@ -158,24 +245,14 @@ async function sync(){
     }
   }
 
-  // Formatos: ISBN casa com a edição atual. O CMS só substitui valores preenchidos.
-  const editionsByIsbn=new Map();
-  for(const e of DATA.editions||[]){
-    const k=digits(e.isbn||e.ean);if(k)editionsByIsbn.set(k,e);
-  }
+  // Formatos e lojas são AUTORITATIVOS no CMS.
+  // Para qualquer livro presente no WordPress, removemos os formatos herdados
+  // do preview e usamos somente os formatos cadastrados no CMS.
+  const cmsTargets=new Set(data.books.map(b=>mapSlug(b.slug,slugMap)));
+  DATA.editions=(DATA.editions||[]).filter(e=>!cmsTargets.has(e.workSlug));
   for(const b of data.books){
     const target=mapSlug(b.slug,slugMap);
-    (b.formats||[]).forEach((f,i)=>{
-      const next=editionFromFormat(b,f,i,target),k=digits(next.isbn||next.ean),old=k?editionsByIsbn.get(k):null;
-      if(old){
-        Object.assign(old,mergeReal(old,next));
-        if((old.format==='impresso'||old.label==='Edição impressa'||old.binding==='Edição impressa')&&next.format==='brochura'){
-          old.format='brochura';old.label='Brochura';old.binding='Brochura';
-        }
-      }else{
-        DATA.editions.push(next);if(k)editionsByIsbn.set(k,next);
-      }
-    });
+    (b.formats||[]).forEach((f,i)=>DATA.editions.push(editionFromFormat(b,f,i,target)));
   }
 
   // Autores.
@@ -302,6 +379,7 @@ async function sync(){
   }
 
   rebuildMaps();
+  installCmsCommerceRenderer();
   window.EDIOURO_CMS_PAYLOAD=data;
   window.EDIOURO_CMS_SYNC={
     status:'ready',mode:'data-layer',source:data.source||'wordpress-cms',version:data.version,
