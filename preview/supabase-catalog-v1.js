@@ -15,6 +15,41 @@ const mergeReal=(base,next)=>{
   for(const [k,v] of Object.entries(next||{}))if(meaningful(v))out[k]=v;
   return out;
 };
+const unionStrings=(a,b)=>Array.from(new Set([...(a||[]),...(b||[])].filter(Boolean)));
+const unionCredits=(a,b)=>{
+  const m=new Map();
+  for(const x of [...(a||[]),...(b||[])]){
+    if(!x)continue;
+    const key=String(x.contributor||'')+'|'+String(x.role||'');
+    if(key!=='|')m.set(key,x);
+  }
+  return [...m.values()];
+};
+const mergeWork=(base,next)=>{
+  const baseline=next?.source?.system==='cms-baseline';
+  if(!baseline)return mergeReal(base,next);
+  const out={...base};
+  for(const [k,v] of Object.entries(next||{})){
+    if(['credits','collections','categories','subjects','featured'].includes(k))continue;
+    if(!meaningful(out[k])&&meaningful(v))out[k]=v;
+  }
+  out.credits=unionCredits(base.credits,next.credits);
+  out.collections=unionStrings(base.collections,next.collections);
+  out.categories=unionStrings(base.categories,next.categories);
+  out.subjects=unionStrings(base.subjects,next.subjects);
+  out.featured=unionStrings(base.featured,next.featured);
+  return out;
+};
+const mergeEdition=(base,next)=>{
+  const baseline=next?.source?.system==='cms-baseline';
+  if(!baseline)return mergeReal(base,next);
+  const out={...base};
+  for(const [k,v] of Object.entries(next||{})){
+    if(!meaningful(out[k])&&meaningful(v))out[k]=v;
+  }
+  if(meaningful(next.cover))out.cover=next.cover;
+  return out;
+};
 async function table(name,filter=''){
   const r=await fetch(SUPABASE_URL+'/rest/v1/'+name+qs+filter,{
     headers:{apikey:SUPABASE_KEY},
@@ -102,7 +137,7 @@ async function sync(){
     const targetSlug=workSlugMap.get(row.slug)||row.slug;
     const next=workRow(row,targetSlug);
     const old=worksBySlug.get(targetSlug);
-    if(old)Object.assign(old,mergeReal(old,next));
+    if(old)Object.assign(old,mergeWork(old,next));
     else{DATA.works.push(next);worksBySlug.set(targetSlug,next);}
   }
 
@@ -116,7 +151,7 @@ async function sync(){
     const targetWork=workSlugMap.get(row.work_slug)||row.work_slug;
     const next=editionRow(row,targetWork);
     const old=editionsByIsbn.get(k);
-    if(old)Object.assign(old,mergeReal(old,next));
+    if(old)Object.assign(old,mergeEdition(old,next));
     else{DATA.editions.push(next);if(k)editionsByIsbn.set(k,next);}
   }
 
