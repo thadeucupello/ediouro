@@ -1,0 +1,361 @@
+/* Hidden identity study V3 — bright neutral base + editorial campaigns */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap');
+
+:root{
+  --paper:#f8f8f6 !important;
+  --paper2:#eee9e2 !important;
+  --paper3:#ffffff !important;
+  --ink:#171515 !important;
+  --muted:#6a6661 !important;
+  --line:#dad7d2 !important;
+  --green:#171717 !important;
+  --gold:#0028ef !important;
+}
+
+html,body{background:#f8f8f6!important}
+body{
+  color:var(--ink)!important;
+  font-family:'Poppins',Arial,sans-serif!important;
+}
+button,input,select,textarea,
+.nav,.eyebrow,.link,.chip,.book p,.book small,.story p,.newsletter,.footer{
+  font-family:'Poppins',Arial,sans-serif!important;
+}
+.serif,h1,h2,h3{
+  font-family:'Newsreader',Georgia,serif!important;
+  font-weight:500!important;
+}
+.logo{
+  font-family:'Poppins',Arial,sans-serif!important;
+  font-weight:700!important;
+  letter-spacing:-.05em!important;
+}
+
+header{
+  background:rgba(250,250,248,.97)!important;
+  border-bottom:1px solid #dedbd6!important;
+}
+.nav a:hover,.top-link:hover,.search-top:hover{
+  color:#0028ef!important;
+}
+.eyebrow{
+  color:#0028ef!important;
+}
+
+/* Hero: brighter, cleaner, less beige */
+.hero{
+  background:#fff!important;
+  border-bottom:1px solid #e3e0db!important;
+}
+.hero h1{
+  color:#171515!important;
+  font-weight:500!important;
+}
+.hero .lead{
+  font-family:'Newsreader',Georgia,serif!important;
+  color:#58534e!important;
+}
+.searchbox{
+  border-bottom:2px solid #0028ef!important;
+}
+.searchbox input{
+  font-family:'Newsreader',Georgia,serif!important;
+}
+.searchbox button{
+  background:#0028ef!important;
+  color:#fff!important;
+}
+.examples .chip{
+  background:#fff!important;
+  border-color:#dedbd6!important;
+}
+.examples .chip:hover{
+  border-color:#0028ef!important;
+  color:#0028ef!important;
+}
+.hero-covers{
+  position:relative!important;
+  isolation:isolate;
+}
+.hero-covers:before{
+  content:'';
+  position:absolute;
+  width:72%;
+  height:70%;
+  left:15%;
+  top:15%;
+  background:#f3f3f0;
+  border-top:6px solid #0028ef;
+  z-index:-1;
+}
+.hero-cover{z-index:1}
+
+/* General navigation accents */
+.sec-head .link,.link{
+  color:#0028ef!important;
+  border-bottom-color:#0028ef!important;
+}
+
+/* Reading-interest grid: identity support colors live here */
+.cats .cat:nth-child(1){background:#0028ef!important;color:#fff!important}
+.cats .cat:nth-child(2){background:#151515!important;color:#fff!important}
+.cats .cat:nth-child(3){background:#ff97d6!important;color:#171515!important}
+.cats .cat:nth-child(4){background:#3a3735!important;color:#fff!important}
+.cats .cat:nth-child(5){background:#ffc501!important;color:#171515!important}
+.cats .cat:nth-child(6){background:#ff4b00!important;color:#171515!important}
+.cats .cat:nth-child(7){background:#00e868!important;color:#171515!important}
+.cats .cat:nth-child(8){background:#dfe2df!important;color:#171515!important;border:1px solid #cfd2cf}
+.cats .cat:nth-child(9){background:#202020!important;color:#fff!important}
+.cats .cat:nth-child(10){background:#ffc501!important;color:#171515!important}
+.cat h3,.cat p{color:inherit!important}
+.cat strong{font-family:'Newsreader',Georgia,serif!important}
+
+/* FIRST editorial placement: the black campaign banner */
+.editorial-placement{
+  background:#f8f8f6!important;
+  padding:92px 0!important;
+}
+.editorial-placement .placement-card{
+  min-height:470px!important;
+  display:grid!important;
+  grid-template-columns:1.08fr .92fr!important;
+  align-items:center!important;
+  gap:36px!important;
+  position:relative!important;
+  overflow:hidden!important;
+  padding:56px 62px!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.editorial-placement .placement-card:not(.reverse){
+  background:#171717!important;
+  color:#fff!important;
+}
+.editorial-placement .placement-card:not(.reverse):before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:8px;
+  background:#0028ef;
+}
+.editorial-placement .placement-card:not(.reverse):after{
+  content:'';
+  position:absolute;
+  right:-12%;top:-30%;
+  width:52%;height:160%;
+  background:radial-gradient(circle,rgba(0,40,239,.28),rgba(0,40,239,0) 68%);
+  pointer-events:none;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-copy{
+  order:1!important;
+  color:#fff!important;
+  position:relative;
+  z-index:2;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-media{
+  order:2!important;
+  position:relative;
+  z-index:2;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-copy .eyebrow{
+  color:#8fa2ff!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-copy h2{
+  color:#fff!important;
+  font-size:clamp(48px,4.8vw,74px)!important;
+  line-height:.94!important;
+  letter-spacing:-.045em!important;
+  max-width:650px!important;
+  margin:14px 0 18px!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-copy p{
+  color:#d9d5d0!important;
+  font-family:'Newsreader',Georgia,serif!important;
+  font-size:18px!important;
+  line-height:1.55!important;
+  max-width:610px!important;
+}
+.editorial-placement .placement-card:not(.reverse) .cta{
+  border:1px solid #fff!important;
+  color:#fff!important;
+  background:transparent!important;
+  font-family:'Poppins',Arial,sans-serif!important;
+  font-size:11px!important;
+  font-weight:600!important;
+  padding:12px 15px!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-collage{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:15px!important;
+  min-height:330px!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-collage .cover{
+  position:static!important;
+  width:29%!important;
+  height:auto!important;
+  aspect-ratio:2/3!important;
+  background:transparent!important;
+  overflow:visible!important;
+  transform:none!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-collage .cover:nth-child(2){
+  transform:translateY(-25px)!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-collage .cover img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  background:transparent!important;
+  box-shadow:0 24px 34px -22px #000!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-badge{
+  display:none!important;
+}
+
+/* SECOND placement: quieter editorial companion */
+.editorial-placement .placement-card.reverse{
+  background:#fff!important;
+  color:#171515!important;
+  border:1px solid #dfddd8!important;
+  border-left:8px solid #ff4b00!important;
+}
+.editorial-placement .placement-card.reverse .placement-copy{
+  color:#171515!important;
+}
+.editorial-placement .placement-card.reverse .placement-copy .eyebrow{
+  color:#0028ef!important;
+}
+.editorial-placement .placement-card.reverse .placement-copy h2{
+  color:#171515!important;
+}
+.editorial-placement .placement-card.reverse .placement-copy p{
+  color:#625e59!important;
+}
+.editorial-placement .placement-card.reverse .cta{
+  border-color:#171515!important;
+  color:#171515!important;
+}
+.editorial-placement .placement-card.reverse .placement-badge{
+  color:#6e6964!important;
+}
+
+/* Books stay clean */
+.shelf .book h3{
+  font-family:'Newsreader',Georgia,serif!important;
+}
+.shelf .book p,.shelf .book small{
+  color:#6a655f!important;
+}
+
+/* One warm editorial area only */
+.recess{
+  background:#eee9e2!important;
+}
+.brand-title{color:#171515!important}
+.brand-shelf-native .brand-panel-content .eyebrow{color:inherit!important}
+.brand-shelf-native .brand-panel-content h3{
+  font-family:'Newsreader',Georgia,serif!important;
+  font-weight:500!important;
+}
+.brand-shelf-native .brand-panel-content p,
+.brand-shelf-native .brand-spine span{
+  font-family:'Poppins',Arial,sans-serif!important;
+}
+
+/* Vem aí / series */
+.panorama .series-box{
+  background:#171717!important;
+  color:#fff!important;
+  border-top:8px solid #0028ef!important;
+}
+.panorama .series-box .eyebrow{color:#91a3ff!important}
+.story{border-top-color:#d5d1cc!important}
+.story .eyebrow{color:#0028ef!important}
+
+/* Keep the existing warm Descubra section as the second warm pocket */
+section[style*="background:#ece6da"]{
+  background:#f0ebe4!important;
+}
+
+/* Strong institutional close */
+.institutional{
+  background:#0028ef!important;
+  color:#fff!important;
+}
+.institutional .eyebrow{color:#cbd4ff!important}
+.institutional p{color:#eef0ff!important}
+.institutional .newsletter{
+  border-top-color:rgba(255,255,255,.34)!important;
+}
+.institutional .field{
+  color:#e9ecff!important;
+  border-bottom-color:rgba(255,255,255,.58)!important;
+}
+.institutional .cta{
+  background:#fff!important;
+  border-color:#fff!important;
+  color:#0028ef!important;
+}
+.footer{background:#111!important}
+
+/* Internal pages inherit the brighter system too */
+.page-hero,
+.catalog-v3-hero{
+  background:linear-gradient(180deg,#fff 0%,#f3f3f0 100%)!important;
+}
+.catalog-v3-title h1,.page-hero h1{
+  font-family:'Newsreader',Georgia,serif!important;
+  font-weight:500!important;
+}
+.catalog-v3-search button{
+  background:#0028ef!important;
+  border-color:#0028ef!important;
+  color:#fff!important;
+}
+.catalog-sort-chip.active,
+.catalog-v3-shortcuts>span.active,
+.catalog-v3-shortcuts>span:hover{
+  border-color:#0028ef!important;
+  color:#0028ef!important;
+}
+
+::selection{background:#0028ef;color:#fff}
+
+@media(max-width:900px){
+  .editorial-placement .placement-card{
+    grid-template-columns:1fr!important;
+    padding:42px 34px!important;
+  }
+  .editorial-placement .placement-card:not(.reverse) .placement-media,
+  .editorial-placement .placement-card:not(.reverse) .placement-copy{
+    order:initial!important;
+  }
+}
+@media(max-width:760px){
+  .hero h1{font-size:54px!important}
+  .hero-covers:before{
+    width:82%;left:9%;height:68%;top:16%;
+  }
+  .editorial-placement{
+    padding:64px 0!important;
+  }
+  .editorial-placement .placement-card{
+    padding:34px 24px!important;
+    gap:24px!important;
+    min-height:0!important;
+  }
+  .editorial-placement .placement-card:not(.reverse) .placement-copy h2{
+    font-size:44px!important;
+  }
+  .editorial-placement .placement-card:not(.reverse) .placement-copy p{
+    font-size:16px!important;
+  }
+  .editorial-placement .placement-card:not(.reverse) .placement-collage{
+    min-height:240px!important;
+  }
+  .editorial-placement .placement-card:not(.reverse) .placement-collage .cover{
+    width:31%!important;
+  }
+}
