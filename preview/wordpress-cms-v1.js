@@ -123,6 +123,11 @@ function articleFromCms(p,slugMap){
 
 function installCmsCommerceRenderer(){
   if(typeof bookPage!=='function'||window.__EDIOURO_CMS_COMMERCE_PATCHED)return;
+  window.ediouroSelectCmsEdition=function(slug,id){
+    const next='#/livros/'+slug+'?edicao='+encodeURIComponent(id);
+    if(location.hash===next)window.dispatchEvent(new Event('hashchange'));
+    else location.hash=next;
+  };
   window.__EDIOURO_CMS_COMMERCE_PATCHED=true;
   const before=bookPage;
   const label=t=>({'brochura':'Brochura','capa-dura':'Capa dura','livro-digital':'Livro digital','audiolivro':'Audiolivro'}[t]||t||'Edição');
@@ -136,19 +141,28 @@ function installCmsCommerceRenderer(){
 
     const requested=params?.get?.('edicao')||'';
     const ebookMode=params?.get?.('formato')==='ebook';
+
+    // A página pública escolhe formatos, não edições históricas repetidas.
+    // Quando há mais de uma edição do mesmo formato, mostra a mais recente.
+    const visibleByFormat=new Map();
+    for(const candidate of [...eds].sort((a,b)=>String(b.publicationDate||'').localeCompare(String(a.publicationDate||''))||(b.displayPriority||0)-(a.displayPriority||0))){
+      const key=candidate.format||candidate.label||candidate.id;
+      if(!visibleByFormat.has(key))visibleByFormat.set(key,candidate);
+    }
+    const visibleEds=[...visibleByFormat.values()];
     let ed=eds.find(e=>e.id===requested);
-    if(!ed&&ebookMode)ed=eds.find(e=>e.format==='livro-digital');
-    if(!ed)ed=(typeof principal==='function'?principal(w):null)||eds[0]||null;
+    if(!ed&&ebookMode)ed=visibleEds.find(e=>e.format==='livro-digital');
+    if(!ed)ed=(typeof principal==='function'?principal(w):null)||visibleEds[0]||eds[0]||null;
     if(!ed)return html;
 
     const doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');
     if(!main)return html;
 
-    // Formatos visíveis = exatamente os formatos do WordPress.
+    // Formatos visíveis = formatos atuais do WordPress, sem duplicar histórico.
     const tabs=main.querySelector('.editions');
     if(tabs){
-      tabs.innerHTML=eds.map(e=>
-        '<button class="ed '+(e.id===ed.id?'active':'')+'" onclick="selectEdition('+JSON.stringify(slug)+','+JSON.stringify(e.id)+')">'+
+      tabs.innerHTML=visibleEds.map(e=>
+        '<button class="ed '+(e.id===ed.id?'active':'')+'" onclick="window.ediouroSelectCmsEdition('+JSON.stringify(slug)+','+JSON.stringify(e.id)+')">'+
         esc(e.label||label(e.format))+'<small>'+(typeof money==='function'&&e.price!=null?money(e.price):'')+'</small></button>'
       ).join('');
     }
