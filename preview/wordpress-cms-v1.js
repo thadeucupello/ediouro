@@ -205,7 +205,59 @@ async function sync(){
     if(old)Object.assign(old,mergeReal(old,next));
     else{DATA.series.push(next);seriesBySlug.set(next.slug,next);}
   }
-  window.EDIOURO_CMS_COLLECTIONS=(data.series||[]).filter(x=>x.entityType==='colecao').map(x=>seriesFromCms(x,slugMap));
+  const cmsCollections=(data.series||[]).filter(x=>x.entityType==='colecao');
+  window.EDIOURO_CMS_COLLECTIONS=cmsCollections.map(x=>seriesFromCms(x,slugMap));
+
+  // Coleções: alimenta as MESMAS estruturas nativas já usadas pelo preview.
+  if(typeof COLLECTIONS!=='undefined'&&Array.isArray(COLLECTIONS)&&typeof collectionMap!=='undefined'){
+    COLLECTIONS.splice(0,COLLECTIONS.length);
+    collectionMap.clear();
+    if(typeof editionCollectionsV!=='undefined'){
+      for(const key of Object.keys(editionCollectionsV))delete editionCollectionsV[key];
+    }
+    for(const w of DATA.works||[])w.collections=[];
+    const pickEdition=w=>{
+      const eds=(ED[w.slug]||[]);
+      return eds.find(e=>(e.status==='em-catalogo'||e.status==='pre-venda')&&!['livro-digital','audiolivro'].includes(e.format))
+        ||eds.find(e=>!['livro-digital','audiolivro'].includes(e.format))
+        ||(typeof principal==='function'?principal(w):eds[0])
+        ||eds[0]||null;
+    };
+    for(const row of cmsCollections){
+      const entries=[];
+      for(const rawSlug of row.workSlugs||[]){
+        const slug=mapSlug(rawSlug,slugMap),w=W[slug];
+        if(!w)continue;
+        const edition=pickEdition(w);
+        if(!edition)continue;
+        entries.push({work:w,edition});
+      }
+      const col={
+        slug:row.slug,baseName:row.name,name:row.name,imprint:row.imprint||entries[0]?.work?.imprint||'',
+        hardcover:false,kind:row.mainAuthor?'author':'cms',entries
+      };
+      if(!entries.length)continue;
+      COLLECTIONS.push(col);collectionMap.set(col.slug,col);
+      for(const entry of entries){
+        if(typeof editionCollectionsV!=='undefined'){
+          (editionCollectionsV[entry.edition.id]??=[]).push(col.slug);
+        }
+        if(!entry.work.collections.includes(col.slug))entry.work.collections.push(col.slug);
+      }
+    }
+    const homeCols=data.routes?.home?.relations?.collections||[];
+    if(homeCols.length){
+      const rank=new Map(homeCols.map((slug,i)=>[slug,i]));
+      COLLECTIONS.sort((a,b)=>{
+        const ar=rank.has(a.slug)?rank.get(a.slug):9999,br=rank.has(b.slug)?rank.get(b.slug):9999;
+        if(ar!==br)return ar-br;
+        const ad=a.entries[0]?.edition?.publicationDate||'',bd=b.entries[0]?.edition?.publicationDate||'';
+        return bd.localeCompare(ad)||a.name.localeCompare(b.name,'pt-BR');
+      });
+    }
+    if(typeof editionCollectionsV!=='undefined')window.EDIOURO_EDITION_COLLECTIONS=editionCollectionsV;
+    window.EDIOURO_COLLECTIONS=COLLECTIONS;
+  }
 
   // Descubra: mescla os artigos e respeita a curadoria do índice quando ela existe.
   if(typeof POSTS!=='undefined'){
