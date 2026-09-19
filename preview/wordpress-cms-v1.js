@@ -230,16 +230,17 @@ async function sync(){
     }
   }
 
-  // Livros: atualiza o que existe e acrescenta o que ainda não existe.
-  // Nesta etapa NÃO removemos nenhum registro estático.
+  // Livros: WordPress é autoritativo para o cadastro editorial.
+  // Campos vazios no CMS também são verdade: não herdamos título, descrição,
+  // autores, categorias, série ou relações da camada estática.
+  // Educação fica preservada nesta fase e será migrada separadamente.
   const worksBySlug=new Map((DATA.works||[]).map(w=>[w.slug,w]));
   for(const b of data.books){
     const target=mapSlug(b.slug,slugMap),next=workFromBook(b,target,slugMap),old=worksBySlug.get(target);
     if(old){
-      const merged=mergeReal(old,next);
-      // Campo vazio no CMS não apaga a camada pedagógica estática nesta fase.
-      if(!next.education&&old.education)merged.education=old.education;
-      Object.assign(old,merged);
+      const legacyEducation=old.education;
+      Object.assign(old,next);
+      if(!next.education&&legacyEducation)old.education=legacyEducation;
     }else{
       DATA.works.push(next);worksBySlug.set(target,next);
     }
