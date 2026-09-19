@@ -48,6 +48,13 @@ const mergeEdition=(base,next)=>{
     if(!meaningful(out[k])&&meaningful(v))out[k]=v;
   }
   if(meaningful(next.cover))out.cover=next.cover;
+  // A carga legada chamava brochura de "Edição impressa".
+  // A nomenclatura editorial canônica do CMS é Brochura.
+  if((base?.format==='impresso'||base?.label==='Edição impressa'||base?.binding==='Edição impressa')&&next?.format==='brochura'){
+    out.format='brochura';
+    out.label='Brochura';
+    out.binding='Brochura';
+  }
   return out;
 };
 async function table(name,filter=''){
