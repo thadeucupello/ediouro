@@ -10,48 +10,27 @@
 <div id="s">Carregando Ediouro…</div>
 <script>
 (async()=>{
+ const cms=new URL(location.href).searchParams.get('cms')==='1';
  try{
-  const source='https://raw.githubusercontent.com/thadeucupello/ediouro/79160aa2cb932ff2fcc7d956e6175d57f7ecf4b7/index.html';
-  const oldCover='https://raw.githubusercontent.com/thadeucupello/ediouro/d4c17f80a03c268f4337f6d5930d9ab92f5f8539/preview/covers-v2.js';
-  const newCover='https://raw.githubusercontent.com/thadeucupello/ediouro/75899b074c2f6823d0b456e1000dd9c58551a364/preview/covers-v2.js';
-  const oldCatalogCss='https://raw.githubusercontent.com/thadeucupello/ediouro/3477e2abbe9049a3385eb419a368862374341def/preview/catalog-v3.css';
-  const newCatalogCss='https://raw.githubusercontent.com/thadeucupello/ediouro/ce7b1c480bd3520f92376bc33dc884af0a99e45b/preview/catalog-v3.css';
-  const oldCatalogJs='https://raw.githubusercontent.com/thadeucupello/ediouro/0505d298ed57ddb534b46dbe0e4408feb9d99e73/preview/catalog-v3.js';
-  const newCatalogJs='https://raw.githubusercontent.com/thadeucupello/ediouro/054195f0dcfe0e7f3c585411fa139ec8cbcb3b28/preview/catalog-v3.js';
-  const oldPcpBase='https://raw.githubusercontent.com/thadeucupello/ediouro/8bdbc6d00024aa4b4cff88784ad4ee750192f577/preview/pcp-v2/';
-  const newPcpBase='https://raw.githubusercontent.com/thadeucupello/ediouro/ce7b1c480bd3520f92376bc33dc884af0a99e45b/preview/pcp-v2/';
-  const r=await fetch(source,{cache:'no-store'});
-  if(!r.ok)throw new Error('base '+r.status);
-  let h=await r.text();
-  h=h.replace(oldCover,newCover).replace(oldCatalogCss,newCatalogCss).replace(oldCatalogJs,newCatalogJs).replace(oldPcpBase,newPcpBase);
-  const cmsMode=new URL(location.href).searchParams.get('cms')==='1';
-  if(cmsMode){
-   const injection=`
-  try{
-   const cmsAdapter=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/cms-headless-v1/preview/wordpress-cms-v1.js',{cache:'no-store'});
-   if(cmsAdapter.ok)loaded.push(['js',await cmsAdapter.text()]);
-  }catch(e){console.warn('CMS WordPress adapter indisponível',e)}
-`;
-   h=h.replace('  for(const item of loaded){',injection+'  for(const item of loaded){');
-  }
+  const r=await fetch('/api/shell?cms='+(cms?'1':'0'),{cache:'default'});
+  if(!r.ok)throw new Error('shell '+r.status);
+  const h=await r.text();
   document.open();document.write(h);document.close();
- }catch(e){
-  document.getElementById('s').textContent='Não foi possível carregar a prévia. '+e.message;
+ }catch(error){
+  console.warn('[Ediouro] shell compilado indisponível; usando builder legado',error);
+  try{
+   const ref='cms-headless-v1';
+   const u='https://raw.githubusercontent.com/thadeucupello/ediouro/'+ref+'/preview/runtime-builder-v1.html';
+   const r=await fetch(u,{cache:'no-store'});
+   if(!r.ok)throw new Error('fallback '+r.status);
+   const h=await r.text();
+   document.open();document.write(h);document.close();
+  }catch(fallbackError){
+   document.getElementById('s').textContent='Não foi possível carregar a prévia.';
+   console.error(fallbackError);
+  }
  }
 })();
 </script>
-<!-- git-deploy-trigger: 2026-09-18 -->
-<!-- vercel-git-check: connected-2026-09-18 -->
-<!-- vercel-git-live: 2026-09-18-final-trigger -->
-<!-- cover-fix-charuto: 2026-09-18 -->
-<!-- cover-frame-test: 2026-09-18-center -->
-<!-- cover-detail-ratio: 2026-09-18-natural -->
-<!-- list-cover-matte: 2026-09-18-none -->
-<!-- catalog-default-order: newest-first-2026-09-18 -->
-<!-- native-brand-shelf: 2026-09-18 -->
-<!-- mobile-brand-spines: interactive-2026-09-18 -->
-<!-- brand-hover-persistence: slower-sticky-2026-09-18 -->
-<!-- mobile-brand-calm: 2026-09-18 -->
-<!-- identity-home-lab: v1-poppins-color -->
 </body>
 </html>
