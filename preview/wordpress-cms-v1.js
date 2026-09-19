@@ -65,6 +65,7 @@ function rebuildMaps(){
   if(typeof ED!=='undefined'){Object.keys(ED).forEach(k=>delete ED[k]);(DATA.editions||[]).forEach(e=>(ED[e.workSlug]??=[]).push(e));Object.values(ED).forEach(arr=>arr.sort((a,b)=>(b.displayPriority||0)-(a.displayPriority||0)));}
   if(typeof C!=='undefined'){Object.keys(C).forEach(k=>delete C[k]);(DATA.contributors||[]).forEach(c=>C[c.slug]=c);}
   if(typeof S!=='undefined'){Object.keys(S).forEach(k=>delete S[k]);(DATA.series||[]).forEach(s=>S[s.slug]=s);}
+  if(typeof P!=='undefined'&&typeof POSTS!=='undefined'){Object.keys(P).forEach(k=>delete P[k]);(POSTS||[]).forEach(p=>P[p.slug]=p);}
 }
 function applyCms(data){
   cmsData=data;window.EDIOURO_CMS_PAYLOAD=data;
@@ -92,10 +93,14 @@ function applyCms(data){
   window.EDIOURO_CMS_COLLECTIONS=cmsCollections;
   if(typeof I!=='undefined')for(const im of data.imprints||[]){
     const old=I[im.slug]||{slug:im.slug};
-    I[im.slug]=mergeMeaningful(old,{slug:im.slug,name:im.name,tagline:im.tagline,description:im.description,color:im.color,ink:im.ink,focus:im.focus,logo:im.logo,founded:im.founded,seo:im.seo});
+    Object.assign(old,mergeMeaningful(old,{slug:im.slug,name:im.name,tagline:im.tagline,description:im.description,color:im.color,ink:im.ink,focus:im.focus,logo:im.logo,founded:im.founded,seo:im.seo}));
+    I[im.slug]=old;
+    if(typeof IMPRINTS!=='undefined'&&Array.isArray(IMPRINTS)&&!IMPRINTS.some(x=>x.slug===im.slug))IMPRINTS.push(old);
   }
   if(typeof POSTS!=='undefined'&&Array.isArray(POSTS)&&Array.isArray(data.articles)){
-    const posts=data.articles.map(p=>({slug:p.slug,title:p.title,kind:p.kind,standfirst:p.standfirst,image:p.image,body:p.body||[],relatedWorks:p.relatedBooks||[],relatedImprint:p.relatedImprint||null,relatedAuthors:p.relatedAuthors||[],relatedSeries:p.relatedSeries||[],publishedAt:p.publishedAt,readingTime:p.readingTime,seo:p.seo||{}}));
+    let posts=data.articles.map(p=>({slug:p.slug,title:p.title,kind:p.kind,standfirst:p.standfirst,image:p.image,body:p.body||[],relatedWorks:p.relatedBooks||[],relatedImprint:p.relatedImprint||null,relatedAuthors:p.relatedAuthors||[],relatedSeries:p.relatedSeries||[],publishedAt:p.publishedAt,readingTime:p.readingTime,featured:p.featured,seo:p.seo||{}}));
+    const dr=data.routes?.['discover-index']?.relations||{},order=[dr.featured,...(dr.selected||[])].filter(Boolean);
+    if(order.length){const rank=new Map(order.map((slug,i)=>[slug,i]));posts.sort((a,b)=>(rank.has(a.slug)?rank.get(a.slug):9999)-(rank.has(b.slug)?rank.get(b.slug):9999)||String(b.publishedAt||'').localeCompare(String(a.publishedAt||'')));}
     POSTS.splice(0,POSTS.length,...posts);
   }
   rebuildMaps();
@@ -321,6 +326,93 @@ function patchHomePage(){
   };
 }
 
+
+function patchDiscoverPages(){
+  if(typeof discoverList==='function'){
+    const before=discoverList;
+    discoverList=function(){
+      const html=before();if(mode!=='cms'||!cmsData?.routes?.['discover-index'])return html;
+      const cfg=cmsData.routes['discover-index'],f=cfg.fields||{},rep=cfg.repeaters||{};
+      const doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const set=(sel,val)=>{if(val===undefined||val===null||val==='')return;const el=main.querySelector(sel);if(el)el.textContent=val;};
+      set('.discover-v3-hero .eyebrow',f.eyebrow);set('.discover-v3-hero h1',f.title);set('.discover-v3-hero p',f.intro);
+      const all=main.querySelector('.discover-filter[data-kind="todos"]');if(all&&f.all_filter)all.textContent=f.all_filter;
+      const paths=main.querySelector('.discover-paths');
+      if(paths&&Array.isArray(rep.paths)&&rep.paths.length){
+        paths.innerHTML=rep.paths.map(x=>'<article class="discover-path" onclick="go('+JSON.stringify(String(x.url||'/livros'))+')"><div class="eyebrow" style="color:inherit;opacity:.65">'+esc(x.eyebrow||'')+'</div><div><h3>'+esc(x.title||'')+'</h3><p>'+esc(x.text||'')+'</p></div></article>').join('');
+        const sec=paths.closest('section');if(sec){const e=sec.querySelector('.sec-head .eyebrow'),h=sec.querySelector('.sec-head h2');if(e&&f.paths_eyebrow)e.textContent=f.paths_eyebrow;if(h&&f.paths_title)h.textContent=f.paths_title;}
+      }
+      const archive=main.querySelector('.discover-all-grid')?.closest('section');if(archive){const e=archive.querySelector('.sec-head .eyebrow'),h=archive.querySelector('.sec-head h2');if(e&&f.archive_eyebrow)e.textContent=f.archive_eyebrow;if(h&&f.archive_title)h.textContent=f.archive_title;}
+      return main.outerHTML;
+    };
+  }
+}
+function patchAuthorsPages(){
+  if(typeof authorsList==='function'){
+    const before=authorsList;
+    authorsList=function(){
+      const html=before();if(mode!=='cms'||!cmsData?.routes?.['authors-index'])return html;
+      const cfg=cmsData.routes['authors-index'],f=cfg.fields||{},rel=cfg.relations||{};
+      const doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const set=(sel,val)=>{if(val===undefined||val===null||val==='')return;const el=main.querySelector(sel);if(el)el.textContent=val;};
+      set('.authors-v3-hero .eyebrow',f.eyebrow);set('.authors-v3-hero h1',f.title);set('.authors-v3-hero p',f.intro);
+      const input=main.querySelector('.authors-v3-search input');if(input&&f.search_placeholder)input.placeholder=f.search_placeholder;
+      set('.authors-v3-search button',f.search_button);
+      const featuredSec=main.querySelector('.authors-v3-featured');
+      if(featuredSec){set('.authors-v3-featured .sec-head .eyebrow',f.featured_eyebrow);set('.authors-v3-featured .sec-head h2',f.featured_title);}
+      const idx=main.querySelector('.authors-v3-index');if(idx){const e=idx.querySelector('.authors-v3-index-head .eyebrow'),h=idx.querySelector('.authors-v3-index-head h2');if(e&&f.directory_eyebrow)e.textContent=f.directory_eyebrow;if(h&&f.directory_title)h.textContent=f.directory_title;}
+      const selected=(rel.featured||[]).map(slug=>C[slug]).filter(Boolean);
+      const grid=featuredSec?.querySelector('.authors-v3-featured-grid');
+      if(grid&&selected.length&&typeof authorBooksV3==='function'){
+        const scored=selected.map(a=>({a,books:authorBooksV3(a.slug)}));
+        const first=scored[0];
+        grid.innerHTML='<article class="author-feature-main" onclick="go('+JSON.stringify('/autores/'+first.a.slug)+')"><div><div class="eyebrow" style="color:#bfb5dc">'+first.books.length+' '+(first.books.length===1?'livro':'livros')+' no catálogo</div><h2>'+esc(first.a.name)+'</h2><p>'+esc(typeof authorBioV3==='function'?authorBioV3(first.a):(first.a.shortBio||''))+'</p><div class="link" style="color:#fff;border-color:#fff;display:inline-block;margin-top:10px">Conhecer o autor</div></div><div class="author-orbit">'+esc(initials(first.a.name))+'</div></article><div class="author-feature-side">'+scored.slice(1).map(({a,books})=>'<article class="author-feature-small" onclick="go('+JSON.stringify('/autores/'+a.slug)+')"><div class="author-mini-mark">'+esc(initials(a.name))+'</div><div><div class="eyebrow">'+books.length+' '+(books.length===1?'livro':'livros')+'</div><h3>'+esc(a.name)+'</h3><p>'+esc(typeof authorBioV3==='function'?authorBioV3(a):(a.shortBio||''))+'</p></div></article>').join('')+'</div>';
+      }
+      return main.outerHTML;
+    };
+  }
+  if(typeof authorPage==='function'){
+    const beforeAuthor=authorPage;
+    authorPage=function(slug){
+      const html=beforeAuthor(slug);if(mode!=='cms')return html;
+      const a=C[slug];if(!a?.photo)return html;
+      const doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main'),portrait=main?.querySelector('.author-v3-portrait');if(!main||!portrait)return html;
+      portrait.innerHTML='<img src="'+esc(a.photo)+'" alt="'+esc(a.photoAlt||('Foto de '+a.name))+'" style="width:100%;height:100%;object-fit:cover;display:block">';
+      return main.outerHTML;
+    };
+  }
+}
+function patchBrandPages(){
+  if(typeof brandsList==='function'){
+    const before=brandsList;
+    brandsList=function(){
+      const html=before();if(mode!=='cms'||!cmsData?.routes?.['imprints-index'])return html;
+      const f=cmsData.routes['imprints-index'].fields||{},doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const set=(sel,val)=>{if(val===undefined||val===null||val==='')return;const el=main.querySelector(sel);if(el)el.textContent=val;};
+      set('.brands-v3-hero .eyebrow',f.eyebrow);set('.brands-v3-hero h1',f.title);set('.brands-v3-hero p',f.intro);
+      return main.outerHTML;
+    };
+  }
+  if(typeof brandPage==='function'){
+    const beforeBrand=brandPage;
+    brandPage=function(slug){
+      const html=beforeBrand(slug);if(mode!=='cms'||!cmsData?.routes?.['imprints-index'])return html;
+      const f=cmsData.routes['imprints-index'].fields||{},doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const intro=main.querySelector('.brand-intro-v3');if(intro){const e=intro.querySelector('.eyebrow'),h=intro.querySelector('h2');if(e&&f.detail_identity_eyebrow)e.textContent=f.detail_identity_eyebrow;if(h&&f.detail_identity_title)h.textContent=f.detail_identity_title;}
+      const heads=[...main.querySelectorAll('.sec-head')];
+      for(const head of heads){
+        const h=head.querySelector('h2'),e=head.querySelector('.eyebrow');if(!h)continue;
+        const t=h.textContent.trim();
+        if(t==='Comece por aqui'){if(e&&f.detail_highlights_eyebrow)e.textContent=f.detail_highlights_eyebrow;if(f.detail_highlights_title)h.textContent=f.detail_highlights_title;}
+        else if(t==='Histórias para continuar.'){if(e&&f.detail_series_eyebrow)e.textContent=f.detail_series_eyebrow;if(f.detail_series_title)h.textContent=f.detail_series_title;}
+        else if(t.startsWith('Vozes da ')&&f.detail_authors_title)h.textContent=f.detail_authors_title;
+        else if(t.startsWith('Continue pela ')&&f.detail_discover_title)h.textContent=f.detail_discover_title;
+      }
+      return main.outerHTML;
+    };
+  }
+}
+
 async function boot(){
   try{
     if(mode==='shadow'){
@@ -329,7 +421,7 @@ async function boot(){
     }
     const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),8000);let r;try{r=await fetch('/api/cms',{cache:'no-cache',signal:controller.signal});}finally{clearTimeout(timer)}if(!r.ok)throw new Error('CMS bridge '+r.status);
     const data=await r.json();if(!data?.ok)throw new Error('CMS payload inválido');
-    applyCms(data);patchBookPage();patchHomePage();patchRouter();
+    applyCms(data);patchBookPage();patchHomePage();patchDiscoverPages();patchAuthorsPages();patchBrandPages();patchRouter();
     window.EDIOURO_CMS_SYNC={status:'cms-ready',mode,version:data.version,source:data.source,books:(data.books||[]).length,collections:cmsCollections.length,series:(data.series||[]).filter(x=>x.entityType!=='colecao').length,checkedAt:new Date().toISOString()};
   }catch(err){
     console.warn('[Ediouro CMS] fallback para o site estático:',err);
