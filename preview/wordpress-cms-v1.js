@@ -484,6 +484,121 @@ function patchSupportPages(){
   };
 }
 
+
+function patchSeriesPages(){
+  if(typeof seriesList==='function'){
+    const before=seriesList;
+    seriesList=function(){
+      const html=before();if(mode!=='cms'||!cmsData?.routes?.['series-index'])return html;
+      const f=cmsData.routes['series-index'].fields||{},doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const set=(sel,val)=>{if(val===undefined||val===null||val==='')return;const el=main.querySelector(sel);if(el)el.textContent=val;};
+      set('.series-index-hero .eyebrow',f.eyebrow);set('.series-index-hero h1',f.title);set('.series-index-hero p',f.intro);set('#seriesAll .sec-head h2',f.section_title);
+      return main.outerHTML;
+    };
+  }
+  if(typeof cmsCollectionsList==='function'){
+    const beforeCollections=cmsCollectionsList;
+    cmsCollectionsList=function(){
+      const html=beforeCollections();if(mode!=='cms'||!cmsData?.routes?.['collections-index'])return html;
+      const f=cmsData.routes['collections-index'].fields||{},doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const set=(sel,val)=>{if(val===undefined||val===null||val==='')return;const el=main.querySelector(sel);if(el)el.textContent=val;};
+      set('.page-hero .eyebrow',f.eyebrow);set('.page-hero h1',f.title);set('.page-hero p',f.intro);
+      const sec=main.querySelector('.collections-grid')?.closest('section');if(sec&&f.section_title){let head=sec.querySelector('.sec-head h2');if(!head){const wrap=sec.querySelector('.wrap');if(wrap)wrap.insertAdjacentHTML('afterbegin','<div class="sec-head"><h2>'+esc(f.section_title)+'</h2></div>');}else head.textContent=f.section_title;}
+      return main.outerHTML;
+    };
+  }
+}
+function patchCatalogAndSearch(){
+  if(typeof catalog==='function'){
+    const before=catalog;
+    catalog=function(params){
+      const html=before(params);if(mode!=='cms'||!cmsData?.routes?.catalog)return html;
+      const cfg=cmsData.routes.catalog,f=cfg.fields||{},rel=cfg.relations||{},doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const set=(sel,val)=>{if(val===undefined||val===null||val==='')return;const el=main.querySelector(sel);if(el)el.textContent=val;};
+      set('.catalog-v3-hero .eyebrow',f.eyebrow);set('.catalog-v3-title h1',f.title);set('.catalog-v3-title p',f.intro);
+      const input=main.querySelector('#catalogSearch');if(input&&f.search_placeholder)input.placeholder=f.search_placeholder;set('.catalog-v3-search button',f.search_button);
+      const shortcut=main.querySelector('.catalog-v3-shortcuts');if(shortcut){const lbl=shortcut.querySelector('span');if(lbl&&f.shortcut_label)lbl.textContent=f.shortcut_label;const cm=new Map((cmsData.categories||[]).map(c=>[c.slug,c]));if(rel.shortcuts?.length)shortcut.innerHTML='<span>'+esc(f.shortcut_label||'Explore:')+'</span>'+rel.shortcuts.map(slug=>cm.get(slug)).filter(Boolean).map(c=>'<button onclick="go('+JSON.stringify('/livros?categoria='+encodeURIComponent(c.slug))+')">'+esc(c.name)+'</button>').join('');}
+      set('.catalog-aside-title',f.filter_title);
+      const groups=[...main.querySelectorAll('.filter-group h4')];if(groups[0]&&f.filter_imprints)groups[0].textContent=f.filter_imprints;if(groups[1]&&f.filter_categories)groups[1].textContent=f.filter_categories;if(groups[2]&&f.filter_series)groups[2].textContent=f.filter_series;
+      const chips=[...main.querySelectorAll('.catalog-sort .sort-chip')],sortMap=[[0,f.sort_featured],[1,f.sort_recent],[2,f.sort_az],[3,f.sort_price]];sortMap.forEach(([i,v])=>{if(chips[i]&&v)chips[i].textContent=v;});
+      const empty=main.querySelector('.catalog-empty');if(empty){set('.catalog-empty .eyebrow',f.empty_eyebrow);set('.catalog-empty h3',f.empty_title);const b=empty.querySelector('button');if(b&&f.empty_button)b.textContent=f.empty_button;}
+      return main.outerHTML;
+    };
+  }
+  if(typeof globalSearch==='function'){
+    const beforeSearch=globalSearch;
+    globalSearch=function(params){
+      const html=beforeSearch(params);if(mode!=='cms'||!cmsData?.routes?.search)return html;
+      const f=cmsData.routes.search.fields||{},doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const q=(params?.get?.('q')||'').trim(),set=(sel,val)=>{if(val===undefined||val===null||val==='')return;const el=main.querySelector(sel);if(el)el.textContent=val;};
+      set('.search-v3-hero .eyebrow',f.eyebrow);if(!q)set('.search-v3-hero h1',f.title);
+      const input=main.querySelector('#globalSearch');if(input&&f.placeholder)input.placeholder=f.placeholder;
+      if(!q){const state=main.querySelector('.state-card');if(state&&f.intro){const h=state.querySelector('h2');if(h)h.textContent=f.intro;}}
+      const labels={Livros:f.books_label,Autores:f.authors_label,Séries:f.series_label,Marcas:f.imprints_label,Descubra:f.discover_label};
+      [...main.querySelectorAll('.search-section-head h2')].forEach(h=>{if(labels[h.textContent.trim()])h.textContent=labels[h.textContent.trim()];});
+      const empty=main.querySelector('.search-empty-v3');if(empty){set('.search-empty-v3 h2',f.empty_title);set('.search-empty-v3 p',f.empty_text);const cta=empty.querySelector('.cta');if(cta&&f.empty_cta)cta.textContent=f.empty_cta;}
+      return main.outerHTML;
+    };
+  }
+}
+function patchStatePages(){
+  if(typeof newsletterThanks==='function'){
+    const before=newsletterThanks;
+    newsletterThanks=function(){
+      const html=before();if(mode!=='cms'||!cmsData?.routes?.['newsletter-obrigado'])return html;
+      const f=cmsData.routes['newsletter-obrigado'].fields||{},doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const set=(sel,val)=>{if(val===undefined||val===null||val==='')return;const el=main.querySelector(sel);if(el)el.textContent=val;};
+      set('.support-hero .eyebrow',f.eyebrow);set('.support-hero h1',f.title);set('.support-hero p',f.intro);set('.state-card h2',f.card_title);set('.state-card p',f.card_text);const cta=main.querySelector('.state-card .cta');if(cta){if(f.cta)cta.textContent=f.cta;if(f.cta_url)cta.setAttribute('onclick','go('+JSON.stringify(f.cta_url)+')');}
+      return main.outerHTML;
+    };
+  }
+  if(typeof notFound==='function'){
+    const before404=notFound;
+    notFound=function(){
+      const html=before404();if(mode!=='cms'||!cmsData?.routes?.['404'])return html;
+      const f=cmsData.routes['404'].fields||{},doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const set=(sel,val)=>{if(val===undefined||val===null||val==='')return;const el=main.querySelector(sel);if(el)el.textContent=val;};
+      set('.support-hero .eyebrow',f.eyebrow);set('.support-hero h1',f.title);set('.support-hero p',f.intro);return main.outerHTML;
+    };
+  }
+}
+function patchGlobalLabels(){
+  const cfg=cmsData?.routes?.config,f=cfg?.fields||{};
+  if(!cfg)return;
+  if(typeof header==='function'){
+    const beforeHeader=header;
+    header=function(){const html=beforeHeader();if(mode!=='cms')return html;const doc=new DOMParser().parseFromString(html,'text/html'),root=doc.body.firstElementChild;if(!root)return html;root.querySelectorAll('.logo').forEach(x=>{if(f.wordmark)x.textContent=f.wordmark;});const st=root.querySelector('.search-top');if(st&&f.search_label)st.textContent='⌕ '+f.search_label;const ab=root.querySelector('.top-link');if(ab&&f.about_label)ab.textContent=f.about_label;const mi=root.querySelector('#menuSearch');if(mi&&f.search_placeholder)mi.placeholder=f.search_placeholder;return root.outerHTML;};
+  }
+  if(typeof footer==='function'){
+    const beforeFooter=footer;
+    footer=function(){const html=beforeFooter();if(mode!=='cms')return html;const doc=new DOMParser().parseFromString(html,'text/html'),root=doc.body.firstElementChild;if(!root)return html;const logo=root.querySelector('.logo');if(logo&&f.wordmark)logo.textContent=f.wordmark;const p=logo?.parentElement?.querySelector('p');if(p&&f.footer_tagline)p.textContent=f.footer_tagline;const contact=root.querySelector('.footer-contact');if(contact){const span=contact.querySelector('span'),a=contact.querySelector('a');if(span&&f.sac_label)span.textContent=f.sac_label;if(a&&f.sac_email){a.textContent=f.sac_email;a.href='mailto:'+f.sac_email;}}const badge=root.querySelector('.accessible-book-badge');if(badge&&f.accessibility_url)badge.href=f.accessibility_url;const media=cfg.media||{};const img=badge?.querySelector('img');if(img&&media.accessibilityLogo)img.src=media.accessibilityLogo;return root.outerHTML;};
+  }
+  if(typeof bookPage==='function'){
+    const beforeBook=bookPage;
+    bookPage=function(slug,params){const html=beforeBook(slug,params);if(mode!=='cms')return html;const doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+      const crumb=main.querySelector('.breadcrumb .entity-crumb');if(crumb&&f.book_breadcrumb)crumb.textContent=f.book_breadcrumb;
+      const ed=main.querySelector('.edition-label');if(ed&&f.book_choose_format)ed.textContent=f.book_choose_format;
+      const price=main.querySelector('.price span');if(price&&f.book_price_label)price.textContent=f.book_price_label;
+      const rt=main.querySelector('.retail-title');if(rt&&f.book_buy_label)rt.textContent=f.book_buy_label;
+      const blocks=[...main.querySelectorAll('.detail-block')];if(blocks[0]){const h=blocks[0].querySelector('h2');if(h&&f.book_about_label)h.textContent=f.book_about_label;}
+      blocks.forEach(b=>{const h=b.querySelector('.sec-head h2');if(h&&h.textContent.includes('·')&&f.book_series_order_label)h.textContent=h.textContent.split('·')[0].trim()+' · '+f.book_series_order_label;const l=b.querySelector('.sec-head .link');if(l&&f.book_series_link_label)l.textContent=f.book_series_link_label;const ae=b.querySelector('.author-entity-block .eyebrow');if(ae&&f.book_author_label)ae.textContent=f.book_author_label;});
+      const rel=main.querySelector('section.related .sec-head h2');if(rel&&f.book_related_label)rel.textContent=f.book_related_label;
+      const sections=[...main.querySelectorAll('section')];const contentSec=sections.find(x=>x.querySelector('.story'));const ch=contentSec?.querySelector('.sec-head h2');if(ch&&f.book_related_content_label)ch.textContent=f.book_related_content_label;
+      const edu=main.querySelector('.book-education-card');if(edu){const e=edu.querySelector('.eyebrow'),h=edu.querySelector('h2');if(e&&f.book_education_eyebrow)e.textContent=f.book_education_eyebrow;if(h&&f.book_education_title)h.textContent=f.book_education_title;}
+      const metaMap={Formato:f.meta_format,Páginas:f.meta_pages,ISBN:f.meta_isbn,Acabamento:f.meta_binding,Dimensões:f.meta_dimensions,Status:f.meta_status,EAN:f.meta_ean};main.querySelectorAll('.meta-row span').forEach(x=>{if(metaMap[x.textContent.trim()])x.textContent=metaMap[x.textContent.trim()];});
+      return main.outerHTML;};
+  }
+  if(typeof authorPage==='function'){
+    const beforeAuthor=authorPage;authorPage=function(slug){const html=beforeAuthor(slug);if(mode!=='cms')return html;const doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;const hero=main.querySelector('.author-v3-copy .eyebrow');if(hero&&f.author_eyebrow)hero.textContent=f.author_eyebrow;const about=main.querySelector('.narrow>.eyebrow');if(about&&f.author_about_label)about.textContent=f.author_about_label;const bib=main.querySelector('.author-v3-books .sec-head .eyebrow');if(bib&&f.author_bibliography_label)bib.textContent=f.author_bibliography_label;const ser=main.querySelector('.author-v3-series .sec-head .eyebrow');if(ser&&f.author_series_label)ser.textContent=f.author_series_label;const dis=main.querySelector('.author-v3-editorial .sec-head .eyebrow');if(dis&&f.author_discover_label)dis.textContent=f.author_discover_label;return main.outerHTML;};
+  }
+  if(typeof seriesPage==='function'){
+    const beforeSeries=seriesPage;seriesPage=function(slug){const html=beforeSeries(slug);if(mode!=='cms')return html;const doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;const e=main.querySelector('.series-detail-hero .eyebrow');if(e&&f.series_eyebrow){const prefix=e.textContent.split('·')[0].trim();e.textContent=prefix+' · '+f.series_eyebrow;}const rh=main.querySelector('.series-reading-head h2');if(rh&&f.series_order_label)rh.textContent=f.series_order_label;const related=main.querySelector('.series-related-band .sec-head h2');if(related&&f.series_explore_label)related.textContent=f.series_explore_label;main.querySelectorAll('.series-reading-copy .eyebrow').forEach(x=>{if(f.series_volume_label)x.textContent=x.textContent.replace(/^Volume/i,f.series_volume_label);});return main.outerHTML;};
+  }
+  if(typeof articlePage==='function'){
+    const beforeArticle=articlePage;articlePage=function(slug){const html=beforeArticle(slug);if(mode!=='cms')return html;const doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;const side=[...main.querySelectorAll('.article-v3-side-block .eyebrow')];side.forEach(x=>{const t=x.textContent.trim();if(t==='Casa editorial'&&f.discover_imprint_label)x.textContent=f.discover_imprint_label;else if(t==='Autores relacionados'&&f.discover_authors_label)x.textContent=f.discover_authors_label;else if(t.includes('Séries')&&f.discover_series_label)x.textContent=f.discover_series_label;});const rel=main.querySelector('section.related .sec-head');if(rel){const e=rel.querySelector('.eyebrow'),h=rel.querySelector('h2');if(e&&f.discover_continue_label)e.textContent=f.discover_continue_label;if(h&&f.discover_books_label)h.textContent=f.discover_books_label;}const nx=main.querySelector('.article-next .eyebrow');if(nx&&f.discover_next_label)nx.textContent=f.discover_next_label;return main.outerHTML;};
+  }
+}
+
 async function boot(){
   try{
     if(mode==='shadow'){
@@ -492,7 +607,7 @@ async function boot(){
     }
     const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),8000);let r;try{r=await fetch('/api/cms',{cache:'no-cache',signal:controller.signal});}finally{clearTimeout(timer)}if(!r.ok)throw new Error('CMS bridge '+r.status);
     const data=await r.json();if(!data?.ok)throw new Error('CMS payload inválido');
-    applyCms(data);patchBookPage();patchHomePage();patchDiscoverPages();patchAuthorsPages();patchBrandPages();patchAboutPage();patchEducationPages();patchSupportPages();patchRouter();
+    applyCms(data);patchBookPage();patchHomePage();patchDiscoverPages();patchAuthorsPages();patchBrandPages();patchAboutPage();patchEducationPages();patchSupportPages();patchSeriesPages();patchCatalogAndSearch();patchStatePages();patchGlobalLabels();patchRouter();
     window.EDIOURO_CMS_SYNC={status:'cms-ready',mode,version:data.version,source:data.source,books:(data.books||[]).length,collections:cmsCollections.length,series:(data.series||[]).filter(x=>x.entityType!=='colecao').length,checkedAt:new Date().toISOString()};
   }catch(err){
     console.warn('[Ediouro CMS] fallback para o site estático:',err);
