@@ -250,12 +250,23 @@ async function sync(){
     }
   }
 
+  // Algumas entradas do CMS são edições comerciais da mesma obra, não obras
+  // públicas independentes. Mantemos os cadastros no WordPress para não perder
+  // ISBN/capa/preço, mas aninhamos seus formatos na obra canônica no site.
+  const publicWorkAliases=new Map([
+    ['auto-da-compadecida-edicao-comemorativa','auto-da-compadecida']
+  ]);
+  for(const [from,to] of publicWorkAliases)slugMap.set(from,to);
+
   // Livros: WordPress é autoritativo para o cadastro editorial.
   // Campos vazios no CMS também são verdade: não herdamos título, descrição,
   // autores, categorias, série ou relações da camada estática.
   // Educação fica preservada nesta fase e será migrada separadamente.
   const worksBySlug=new Map((DATA.works||[]).map(w=>[w.slug,w]));
   for(const b of data.books){
+    // A ficha editorial da obra canônica não deve ser sobrescrita pela ficha
+    // de uma edição especial que será exibida apenas como formato.
+    if(publicWorkAliases.has(b.slug))continue;
     const target=mapSlug(b.slug,slugMap),next=workFromBook(b,target,slugMap),old=worksBySlug.get(target);
     if(old){
       const legacyEducation=old.education;
@@ -264,6 +275,15 @@ async function sync(){
     }else{
       DATA.works.push(next);worksBySlug.set(target,next);
     }
+  }
+  // Remove a página pública duplicada e reassocia qualquer edição legada
+  // dela à obra principal, preservando os dados comerciais já existentes.
+  for(let i=(DATA.works||[]).length-1;i>=0;i--){
+    if(publicWorkAliases.has(DATA.works[i]?.slug))DATA.works.splice(i,1);
+  }
+  for(const e of DATA.editions||[]){
+    const canonical=publicWorkAliases.get(e.workSlug);
+    if(canonical)e.workSlug=canonical;
   }
 
   // Formatos em transição segura: o CMS sobrescreve a mesma edição por ISBN,
