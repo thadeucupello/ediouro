@@ -24,6 +24,16 @@
   if(!r.ok)throw new Error('base '+r.status);
   let h=await r.text();
   h=h.replace(oldCover,newCover).replace(oldCatalogCss,newCatalogCss).replace(oldCatalogJs,newCatalogJs).replace(oldPcpBase,newPcpBase);
+  const cmsMode=new URL(location.href).searchParams.get('cms')==='1';
+  if(cmsMode){
+   const injection=`
+  try{
+   const cmsAdapter=await fetch('https://raw.githubusercontent.com/thadeucupello/ediouro/cms-headless-v1/preview/wordpress-cms-v1.js',{cache:'no-store'});
+   if(cmsAdapter.ok)loaded.push(['js',await cmsAdapter.text()]);
+  }catch(e){console.warn('CMS WordPress adapter indisponível',e)}
+`;
+   h=h.replace('  for(const item of loaded){',injection+'  for(const item of loaded){');
+  }
   document.open();document.write(h);document.close();
  }catch(e){
   document.getElementById('s').textContent='Não foi possível carregar a prévia. '+e.message;
