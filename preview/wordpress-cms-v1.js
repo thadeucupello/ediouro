@@ -256,31 +256,31 @@ async function sync(){
     (b.formats||[]).forEach((f,i)=>DATA.editions.push(editionFromFormat(b,f,i,target)));
   }
 
-  // Autores.
+  // Autores: WordPress é autoritativo para campos editoriais.
   const contributorsBySlug=new Map((DATA.contributors||[]).map(c=>[c.slug,c]));
   for(const a of data.authors||[]){
     const next=authorFromCms(a),old=contributorsBySlug.get(next.slug);
-    if(old)Object.assign(old,mergeReal(old,next));
+    if(old)Object.assign(old,next);
     else{DATA.contributors.push(next);contributorsBySlug.set(next.slug,next);}
   }
 
-  // Selos, preservando objetos já referenciados pelo front.
+  // Selos: WordPress é autoritativo, preservando apenas a identidade do objeto em memória.
   if(typeof IMPRINTS!=='undefined'){
     const imprintsBySlug=new Map(IMPRINTS.map(x=>[x.slug,x]));
     for(const im of data.imprints||[]){
       const next={slug:im.slug,name:im.name,tagline:im.tagline||'',description:im.description||'',logo:im.logo||'',color:im.color||'',ink:im.ink||'',focus:im.focus||[],founded:im.founded||'',heroBooks:(im.heroBooks||[]).map(s=>mapSlug(s,slugMap)),featuredBooks:(im.featuredBooks||[]).map(s=>mapSlug(s,slugMap)),featuredSeries:im.featuredSeries||[],featuredAuthors:im.featuredAuthors||[],featuredArticles:im.featuredArticles||[],seo:im.seo||{},source:{system:'wordpress-cms'}};
       const old=imprintsBySlug.get(next.slug);
-      if(old)Object.assign(old,mergeReal(old,next));
+      if(old)Object.assign(old,next);
       else{IMPRINTS.push(next);imprintsBySlug.set(next.slug,next);}
     }
   }
 
-  // Séries verdadeiras. Coleções ficam, por enquanto, no mecanismo original do preview.
+  // Séries verdadeiras: WordPress é autoritativo. Coleções usam a estrutura nativa alimentada pelo CMS.
   const cmsSeries=(data.series||[]).filter(x=>(x.entityType||'serie')!=='colecao');
   const seriesBySlug=new Map((DATA.series||[]).map(x=>[x.slug,x]));
   for(const row of cmsSeries){
     const next=seriesFromCms(row,slugMap),old=seriesBySlug.get(next.slug);
-    if(old)Object.assign(old,mergeReal(old,next));
+    if(old)Object.assign(old,next);
     else{DATA.series.push(next);seriesBySlug.set(next.slug,next);}
   }
   const cmsCollections=(data.series||[]).filter(x=>x.entityType==='colecao');
@@ -337,12 +337,12 @@ async function sync(){
     window.EDIOURO_COLLECTIONS=COLLECTIONS;
   }
 
-  // Descubra: mescla os artigos e respeita a curadoria do índice quando ela existe.
+  // Descubra: WordPress é autoritativo nos artigos e a curadoria do índice define a ordem quando existe.
   if(typeof POSTS!=='undefined'){
     const postsBySlug=new Map(POSTS.map(p=>[p.slug,p]));
     for(const row of data.articles||[]){
       const next=articleFromCms(row,slugMap),old=postsBySlug.get(next.slug);
-      if(old)Object.assign(old,mergeReal(old,next));
+      if(old)Object.assign(old,next);
       else{POSTS.push(next);postsBySlug.set(next.slug,next);}
     }
     const dr=data.routes?.['discover-index']?.relations||{};
