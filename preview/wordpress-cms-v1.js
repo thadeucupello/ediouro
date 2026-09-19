@@ -210,7 +210,7 @@ function installCmsCommerceRenderer(){
 async function sync(){
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
   let r;
-  try{r=await fetch('/api/cms',{cache:'no-cache',signal:controller.signal});}
+  try{r=await fetch('/api/cms?_ediouro_ts='+Date.now(),{cache:'no-store',signal:controller.signal,headers:{'cache-control':'no-cache'}});}
   finally{clearTimeout(timer);}
   if(!r.ok)throw new Error('CMS bridge '+r.status);
   const data=await r.json();
