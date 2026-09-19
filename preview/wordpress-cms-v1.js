@@ -142,16 +142,20 @@ function installCmsCommerceRenderer(){
     const requested=params?.get?.('edicao')||'';
     const ebookMode=params?.get?.('formato')==='ebook';
 
-    // A página pública escolhe formatos, não edições históricas repetidas.
-    // Quando há mais de uma edição do mesmo formato, mostra a mais recente.
-    const visibleByFormat=new Map();
-    for(const candidate of [...eds].sort((a,b)=>String(b.publicationDate||'').localeCompare(String(a.publicationDate||''))||(b.displayPriority||0)-(a.displayPriority||0))){
-      const key=candidate.format||candidate.label||candidate.id;
-      if(!visibleByFormat.has(key))visibleByFormat.set(key,candidate);
-    }
-    const visibleEds=[...visibleByFormat.values()];
+    // Mostra todas as edições válidas. Não colapsamos duas brochuras diferentes.
+    // Quando um formato digital aponta para um print_isbn, esse impresso é o canônico.
+    const canonicalPrintIsbn=eds.map(e=>digits(e?.source?.print_isbn||'')).find(Boolean)||'';
+    const visibleEds=[...eds].sort((a,b)=>{
+      const ai=digits(a.isbn||a.ean),bi=digits(b.isbn||b.ean);
+      const ac=canonicalPrintIsbn&&ai===canonicalPrintIsbn?1:0,bc=canonicalPrintIsbn&&bi===canonicalPrintIsbn?1:0;
+      if(ac!==bc)return bc-ac;
+      const ad=a.format==='livro-digital'||a.format==='audiolivro'?1:0,bd=b.format==='livro-digital'||b.format==='audiolivro'?1:0;
+      if(ad!==bd)return ad-bd;
+      return (b.displayPriority||0)-(a.displayPriority||0)||String(b.publicationDate||'').localeCompare(String(a.publicationDate||''));
+    });
     let ed=eds.find(e=>e.id===requested);
     if(!ed&&ebookMode)ed=visibleEds.find(e=>e.format==='livro-digital');
+    if(!ed&&canonicalPrintIsbn)ed=visibleEds.find(e=>digits(e.isbn||e.ean)===canonicalPrintIsbn);
     if(!ed)ed=(typeof principal==='function'?principal(w):null)||visibleEds[0]||eds[0]||null;
     if(!ed)return html;
 
@@ -161,8 +165,9 @@ function installCmsCommerceRenderer(){
     // Formatos visíveis = formatos atuais do WordPress, sem duplicar histórico.
     const tabs=main.querySelector('.editions');
     if(tabs){
+      const jsq=v=>String(v||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
       tabs.innerHTML=visibleEds.map(e=>
-        '<button class="ed '+(e.id===ed.id?'active':'')+'" onclick="window.ediouroSelectCmsEdition('+JSON.stringify(slug)+','+JSON.stringify(e.id)+')">'+
+        '<button class="ed '+(e.id===ed.id?'active':'')+'" onclick="window.ediouroSelectCmsEdition(\''+jsq(slug)+'\',\''+jsq(e.id)+'\')">'+
         esc(e.label||label(e.format))+'<small>'+(typeof money==='function'&&e.price!=null?money(e.price):'')+'</small></button>'
       ).join('');
     }
@@ -261,9 +266,8 @@ async function sync(){
     }
   }
 
-  // Formatos e lojas são AUTORITATIVOS no CMS.
-  // Para qualquer livro presente no WordPress, removemos os formatos herdados
-  // do preview e usamos somente os formatos cadastrados no CMS.
+  // Formatos em transição segura: o CMS sobrescreve a mesma edição por ISBN,
+  // mas uma edição legada válida não desaparece só porque ainda não chegou ao CMS.
   const cmsTargets=new Set(data.books.map(b=>mapSlug(b.slug,slugMap)));
   const orphanStatic=staticWorksSnapshot.filter(w=>!cmsTargets.has(w.slug));
   window.EDIOURO_CMS_CATALOG_AUDIT={
@@ -273,10 +277,22 @@ async function sync(){
   try{
     fetch('/api/audit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(window.EDIOURO_CMS_CATALOG_AUDIT),keepalive:true}).catch(()=>{});
   }catch(_){}
-  DATA.editions=(DATA.editions||[]).filter(e=>!cmsTargets.has(e.workSlug));
+  const editionIndex=new Map();
+  for(const e of DATA.editions||[]){
+    const k=digits(e.isbn||e.ean);if(k)editionIndex.set(k,e);
+  }
   for(const b of data.books){
     const target=mapSlug(b.slug,slugMap);
-    (b.formats||[]).forEach((f,i)=>DATA.editions.push(editionFromFormat(b,f,i,target)));
+    for(const [i,f] of (b.formats||[]).entries()){
+      const next=editionFromFormat(b,f,i,target),k=digits(next.isbn||next.ean),old=k?editionIndex.get(k):null;
+      if(old){
+        const legacySource={...(old.source||{})};
+        Object.assign(old,next);
+        old.source={...legacySource,...(next.source||{})};
+      }else{
+        DATA.editions.push(next);if(k)editionIndex.set(k,next);
+      }
+    }
   }
 
   // Autores: WordPress é autoritativo para campos editoriais.
