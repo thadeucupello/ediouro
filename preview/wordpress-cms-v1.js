@@ -181,4 +181,17 @@ async function boot(){
   }
 }
 window.ediouroCmsBootstrap=function(){if(!bootPromise)bootPromise=boot();return bootPromise;};
+if(mode==='cms'){
+  const startCms=()=>{
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),8000);
+    window.ediouroCmsBootstrap().finally(()=>{
+      clearTimeout(timer);
+      if(window.EDIOURO_CMS_SYNC?.status==='cms-ready'&&typeof router==='function'){
+        try{router();}catch(e){console.warn('[Ediouro CMS] rerender falhou',e)}
+      }
+    });
+  };
+  Promise.resolve().then(startCms);
+}
 })();
