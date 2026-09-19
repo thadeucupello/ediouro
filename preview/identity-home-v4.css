@@ -1,0 +1,432 @@
+/* Hidden identity study V4 — paper, books, one blue */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap');
+
+:root{
+  --paper:#F7F5EF !important;
+  --paper2:#F0ECE4 !important;
+  --paper3:#FFFFFF !important;
+  --ink:#171717 !important;
+  --muted:#6C6862 !important;
+  --line:#DDD8CF !important;
+  --green:#171717 !important;
+  --gold:#0028EF !important;
+}
+
+html,body{background:var(--paper)!important}
+body{
+  color:var(--ink)!important;
+  font-family:'Poppins',Arial,sans-serif!important;
+}
+button,input,select,textarea,
+.nav,.link,.chip,.book p,.book small,.story p,.newsletter,.footer{
+  font-family:'Poppins',Arial,sans-serif!important;
+}
+.serif,h1,h2,h3{
+  font-family:'Newsreader',Georgia,serif!important;
+  font-weight:500!important;
+}
+.logo{
+  font-family:'Poppins',Arial,sans-serif!important;
+  font-weight:700!important;
+  letter-spacing:-.05em!important;
+}
+
+/* Header: almost paper */
+header{
+  background:rgba(247,245,239,.97)!important;
+  border-bottom:1px solid var(--line)!important;
+  box-shadow:none!important;
+}
+.nav a,.search-top,.top-link{color:#4E4A45!important}
+.nav a:hover,.top-link:hover,.search-top:hover{color:#0028EF!important}
+
+/* Eyebrows are mostly neutral, with a small Ediouro signal */
+.eyebrow{
+  font-family:'Poppins',Arial,sans-serif!important;
+  color:#6F6A64!important;
+  position:relative;
+}
+.eyebrow:before{
+  content:'';
+  display:inline-block;
+  width:14px;
+  height:2px;
+  background:#0028EF;
+  margin-right:8px;
+  vertical-align:middle;
+}
+
+/* HERO: printed-page feeling, not a designed beige block */
+.hero{
+  background:var(--paper)!important;
+  border-bottom:1px solid var(--line)!important;
+}
+.hero h1{
+  color:#171717!important;
+  font-weight:500!important;
+}
+.hero .lead{
+  font-family:'Newsreader',Georgia,serif!important;
+  color:#56514C!important;
+}
+.searchbox{
+  border-bottom:1px solid #171717!important;
+}
+.searchbox input{
+  font-family:'Newsreader',Georgia,serif!important;
+}
+.searchbox button{
+  background:#0028EF!important;
+  color:#fff!important;
+  border:0!important;
+}
+.examples .chip{
+  background:transparent!important;
+  border-color:#CEC8BF!important;
+  color:#69645E!important;
+}
+.examples .chip:hover{
+  border-color:#0028EF!important;
+  color:#0028EF!important;
+}
+.hero-covers{
+  position:relative!important;
+  isolation:isolate;
+}
+.hero-covers:before{
+  content:'';
+  position:absolute;
+  left:13%;
+  top:15%;
+  width:74%;
+  height:70%;
+  background:#fff;
+  border:1px solid #E4E0D9;
+  z-index:-1;
+}
+.hero-covers:after{
+  content:'';
+  position:absolute;
+  right:8%;
+  bottom:9%;
+  width:58px;
+  height:4px;
+  background:#0028EF;
+}
+.hero-cover{z-index:1}
+
+/* Sections behave like spreads */
+main>section:not(.hero):not(.editorial-placement):not(.recess):not(.institutional){
+  background:var(--paper)!important;
+}
+.sec-head{border-bottom:1px solid var(--line);padding-bottom:18px!important}
+.sec-head .link,.link{
+  color:#0028EF!important;
+  border-bottom-color:#0028EF!important;
+}
+
+/* Interest grid: mostly paper cards, one strong Ediouro anchor */
+.cats{gap:10px!important}
+.cats .cat{
+  background:#fff!important;
+  color:#171717!important;
+  border:1px solid #DCD7CF!important;
+  box-shadow:none!important;
+}
+.cats .cat h3,.cats .cat p{color:inherit!important}
+.cats .cat strong{
+  font-family:'Newsreader',Georgia,serif!important;
+  color:#171717!important;
+  opacity:.08!important;
+}
+.cats .cat:nth-child(1){
+  background:#0028EF!important;
+  border-color:#0028EF!important;
+  color:#fff!important;
+}
+.cats .cat:nth-child(1) strong{color:#fff!important;opacity:.16!important}
+.cats .cat:nth-child(2){border-top:4px solid #171717!important}
+.cats .cat:nth-child(3){border-top:4px solid #FF97D6!important}
+.cats .cat:nth-child(4){border-top:4px solid #5E5A55!important}
+.cats .cat:nth-child(5){border-top:4px solid #FFC501!important}
+.cats .cat:nth-child(6){border-top:4px solid #FF4B00!important}
+.cats .cat:nth-child(7){border-top:4px solid #00B85C!important}
+.cats .cat:nth-child(8){border-top:4px solid #9C9994!important}
+.cats .cat:nth-child(9){border-top:4px solid #0028EF!important}
+.cats .cat:nth-child(10){border-top:4px solid #D4A900!important}
+
+/* Books: let the covers provide the color */
+.shelf .book h3{
+  font-family:'Newsreader',Georgia,serif!important;
+  font-weight:500!important;
+}
+.shelf .book p,.shelf .book small{color:#6B665F!important}
+.book-cover>.cover:not(.placeholder) img{
+  box-shadow:0 15px 26px -22px rgba(0,0,0,.55)!important;
+}
+
+/* PRIMARY CAMPAIGN: keep the banner language that worked */
+.editorial-placement{
+  background:var(--paper)!important;
+  padding:92px 0!important;
+}
+.editorial-placement .placement-card{
+  min-height:470px!important;
+  display:grid!important;
+  grid-template-columns:1.08fr .92fr!important;
+  align-items:center!important;
+  gap:36px!important;
+  position:relative!important;
+  overflow:hidden!important;
+  padding:56px 62px!important;
+  box-shadow:none!important;
+}
+.editorial-placement .placement-card:not(.reverse){
+  background:#151515!important;
+  color:#fff!important;
+  border:0!important;
+}
+.editorial-placement .placement-card:not(.reverse):before{
+  content:'';
+  position:absolute;
+  inset:0 auto 0 0;
+  width:7px;
+  background:#0028EF;
+}
+.editorial-placement .placement-card:not(.reverse):after{
+  content:'';
+  position:absolute;
+  right:-8%;
+  top:-18%;
+  width:44%;
+  height:135%;
+  background:radial-gradient(circle,rgba(0,40,239,.16),rgba(0,40,239,0) 70%);
+  pointer-events:none;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-copy{
+  order:1!important;
+  color:#fff!important;
+  position:relative;
+  z-index:2;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-media{
+  order:2!important;
+  position:relative;
+  z-index:2;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-copy .eyebrow{
+  color:#A9B5FF!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-copy .eyebrow:before{
+  background:#5F78FF!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-copy h2{
+  color:#fff!important;
+  font-size:clamp(48px,4.8vw,74px)!important;
+  line-height:.94!important;
+  letter-spacing:-.045em!important;
+  max-width:650px!important;
+  margin:14px 0 18px!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-copy p{
+  color:#D7D3CD!important;
+  font-family:'Newsreader',Georgia,serif!important;
+  font-size:18px!important;
+  line-height:1.55!important;
+  max-width:610px!important;
+}
+.editorial-placement .placement-card:not(.reverse) .cta{
+  border:1px solid #fff!important;
+  color:#fff!important;
+  background:transparent!important;
+  font-family:'Poppins',Arial,sans-serif!important;
+  font-size:11px!important;
+  font-weight:600!important;
+  padding:12px 15px!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-collage{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:15px!important;
+  min-height:330px!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-collage .cover{
+  position:static!important;
+  width:29%!important;
+  height:auto!important;
+  aspect-ratio:2/3!important;
+  background:transparent!important;
+  overflow:visible!important;
+  transform:none!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-collage .cover:nth-child(2){
+  transform:translateY(-25px)!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-collage .cover img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  background:transparent!important;
+  box-shadow:0 24px 34px -22px #000!important;
+}
+.editorial-placement .placement-card:not(.reverse) .placement-badge{display:none!important}
+
+/* SECOND CAMPAIGN: more magazine spread, less banner */
+.editorial-placement .placement-card.reverse{
+  background:#fff!important;
+  color:#171717!important;
+  border:1px solid #DCD7CF!important;
+  border-left:0!important;
+}
+.editorial-placement .placement-card.reverse:before{
+  content:'';
+  position:absolute;
+  left:0;top:0;
+  width:100%;
+  height:4px;
+  background:#0028EF;
+}
+.editorial-placement .placement-card.reverse .placement-copy{color:#171717!important}
+.editorial-placement .placement-card.reverse .placement-copy .eyebrow{color:#6F6A64!important}
+.editorial-placement .placement-card.reverse .placement-copy h2{color:#171717!important}
+.editorial-placement .placement-card.reverse .placement-copy p{
+  color:#625D57!important;
+  font-family:'Newsreader',Georgia,serif!important;
+}
+.editorial-placement .placement-card.reverse .cta{
+  border-color:#171717!important;
+  color:#171717!important;
+  background:transparent!important;
+}
+.editorial-placement .placement-card.reverse .placement-badge{
+  color:#76716B!important;
+}
+
+/* Brand section is allowed to be colorful because the brands are */
+.recess{
+  background:#F0ECE4!important;
+  border-top:1px solid #E0DBD2!important;
+  border-bottom:1px solid #E0DBD2!important;
+}
+.brand-title{color:#171717!important}
+.brand-shelf-native .brand-panel-content .eyebrow{color:inherit!important}
+.brand-shelf-native .brand-panel-content .eyebrow:before{display:none!important}
+.brand-shelf-native .brand-panel-content h3{
+  font-family:'Newsreader',Georgia,serif!important;
+  font-weight:500!important;
+}
+.brand-shelf-native .brand-panel-content p,
+.brand-shelf-native .brand-spine span{
+  font-family:'Poppins',Arial,sans-serif!important;
+}
+
+/* Vem aí and series become quieter */
+.panorama .series-box{
+  background:#fff!important;
+  color:#171717!important;
+  border:1px solid #DCD7CF!important;
+  border-top:5px solid #0028EF!important;
+}
+.panorama .series-box p{color:#655F59!important}
+.panorama .series-box .cta{
+  color:#171717!important;
+  border-color:#171717!important;
+}
+.panorama .series-box .eyebrow{color:#6F6A64!important}
+.story{border-top-color:#D7D2CB!important}
+.story .eyebrow{color:#6F6A64!important}
+
+/* Descubra becomes clean paper, not another beige slab */
+section[style*="background:#ece6da"]{
+  background:#fff!important;
+  border-top:1px solid #E1DDD6!important;
+  border-bottom:1px solid #E1DDD6!important;
+}
+
+/* Institutional close: black ink on paper with one blue rule */
+.institutional{
+  background:#171717!important;
+  color:#fff!important;
+  position:relative;
+}
+.institutional:before{
+  content:'';
+  position:absolute;
+  left:0;top:0;right:0;
+  height:6px;
+  background:#0028EF;
+}
+.institutional .eyebrow{color:#B9C3FF!important}
+.institutional .eyebrow:before{background:#6E83FF!important}
+.institutional p{color:#D8D4CE!important}
+.institutional .newsletter{
+  border-top-color:rgba(255,255,255,.22)!important;
+}
+.institutional .field{
+  color:#DAD6D0!important;
+  border-bottom-color:rgba(255,255,255,.42)!important;
+}
+.institutional .cta{
+  background:#fff!important;
+  border-color:#fff!important;
+  color:#171717!important;
+}
+.footer{background:#0F0F0F!important}
+
+/* Internal pages follow the same paper system */
+.page-hero,
+.catalog-v3-hero{
+  background:#fff!important;
+  border-bottom:1px solid #E1DDD6!important;
+}
+.catalog-v3-title h1,.page-hero h1{
+  font-family:'Newsreader',Georgia,serif!important;
+  font-weight:500!important;
+}
+.catalog-v3-search button{
+  background:#0028EF!important;
+  border-color:#0028EF!important;
+  color:#fff!important;
+}
+.catalog-sort-chip.active,
+.catalog-v3-shortcuts>span.active,
+.catalog-v3-shortcuts>span:hover{
+  border-color:#0028EF!important;
+  color:#0028EF!important;
+}
+
+::selection{background:#0028EF;color:#fff}
+
+@media(max-width:900px){
+  .editorial-placement .placement-card{
+    grid-template-columns:1fr!important;
+    padding:42px 34px!important;
+  }
+  .editorial-placement .placement-card:not(.reverse) .placement-media,
+  .editorial-placement .placement-card:not(.reverse) .placement-copy{
+    order:initial!important;
+  }
+}
+@media(max-width:760px){
+  .hero h1{font-size:54px!important}
+  .hero-covers:before{width:84%;left:8%;height:68%;top:16%}
+  .editorial-placement{padding:64px 0!important}
+  .editorial-placement .placement-card{
+    padding:34px 24px!important;
+    gap:24px!important;
+    min-height:0!important;
+  }
+  .editorial-placement .placement-card:not(.reverse) .placement-copy h2{
+    font-size:44px!important;
+  }
+  .editorial-placement .placement-card:not(.reverse) .placement-copy p{
+    font-size:16px!important;
+  }
+  .editorial-placement .placement-card:not(.reverse) .placement-collage{
+    min-height:240px!important;
+  }
+  .editorial-placement .placement-card:not(.reverse) .placement-collage .cover{
+    width:31%!important;
+  }
+}
