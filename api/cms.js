@@ -5,8 +5,15 @@ export default async function handler(req, res) {
   const summary = String(req.query?.summary || '') === '1';
   const endpoint = health ? '/wp-json/ediouro/v1/health' : '/wp-json/ediouro/v1/site';
   try {
-    const upstream = await fetch(CMS_ORIGIN + endpoint, {
-      headers: { 'accept': 'application/json', 'user-agent': 'Ediouro-Vercel-CMS-Bridge/1.0' }
+    const upstreamUrl = CMS_ORIGIN + endpoint + (endpoint.includes('?') ? '&' : '?') + '_ediouro_ts=' + Date.now();
+    const upstream = await fetch(upstreamUrl, {
+      cache: 'no-store',
+      headers: {
+        'accept': 'application/json',
+        'cache-control': 'no-cache, no-store, max-age=0',
+        'pragma': 'no-cache',
+        'user-agent': 'Ediouro-Vercel-CMS-Bridge/1.0'
+      }
     });
     const text = await upstream.text();
     if (!upstream.ok) {
@@ -19,7 +26,9 @@ export default async function handler(req, res) {
       res.status(502).json({ ok:false, endpoint, error:'CMS returned non-JSON', sample:text.slice(0,500) });
       return;
     }
-    res.setHeader('Cache-Control','public, s-maxage=60, stale-while-revalidate=300');
+    res.setHeader('Cache-Control','no-store, no-cache, must-revalidate, max-age=0');
+    res.setHeader('Pragma','no-cache');
+    res.setHeader('Expires','0');
     if (health || !summary) {
       res.status(200).json(data);
       return;
