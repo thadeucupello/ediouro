@@ -165,6 +165,9 @@ function patchRouter(){
         const body=path==='/colecoes'?cmsCollectionsList():cmsCollectionPage(decodeURIComponent(path.split('/')[2]||''));
         document.getElementById('app').innerHTML=header()+body+footer();scrollTo(0,0);return;
       }
+      if(path==='/sac'&&cmsData?.routes?.sac){
+        document.getElementById('app').innerHTML=header()+supportPage('sac')+footer();scrollTo(0,0);return;
+      }
     }
     return before();
   };
@@ -466,8 +469,19 @@ function patchSupportPages(){
   if(typeof supportPage!=='function')return;
   const before=supportPage;
   supportPage=function(type){
-    const html=before(type),cfg=mode==='cms'?cmsData?.routes?.[type]:null;if(!cfg)return html;
-    const f=cfg.fields||{},rep=cfg.repeaters||{},doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
+    let html=before(type),cfg=mode==='cms'?cmsData?.routes?.[type]:null;if(!cfg)return html;
+    const f=cfg.fields||{},rep=cfg.repeaters||{};
+    let probe=new DOMParser().parseFromString(html,'text/html');
+    if(!probe.querySelector('.support-intro-row')){
+      const contactHtml=(rep.contacts||[]).map(c=>{
+        if(c.email&&typeof supportEmailCard==='function')return supportEmailCard(c.eyebrow||'',c.title||'',c.text||'',c.email||'',c.subject||'');
+        const url=c.url||'';return '<article class="support-contact-card '+(url?'support-card-link':'')+'" '+(url?'onclick="window.open('+JSON.stringify(url)+',\'_blank\')"':'')+'><div><div class="eyebrow">'+esc(c.eyebrow||'')+'</div><h3>'+esc(c.title||'')+'</h3><p>'+esc(c.text||'')+'</p></div>'+(c.cta_label?'<div class="support-email-cta"><span>'+esc(c.cta_label)+'</span><span>→</span></div>':'')+'</article>';
+      }).join('');
+      const notes=(rep.notes||[]).length?'<div class="support-note">'+rep.notes.map(n=>'<div><strong>'+esc(n.title||'')+(n.title?':':'')+'</strong> '+esc(n.text||'')+'</div>').join('')+'</div>':'';
+      const links=typeof supportNavLinks==='function'?supportNavLinks((rep.links||[]).map(x=>[x.label,x.url])):'<div class="support-links">'+(rep.links||[]).map(x=>'<div class="support-link" onclick="go('+JSON.stringify(String(x.url||'/'))+')"><span>'+esc(x.label||'')+'</span><span>→</span></div>').join('')+'</div>';
+      html='<main><div class="support-hero blue"><div class="wrap"><div class="eyebrow">'+esc(f.hero_eyebrow||'Ediouro')+'</div><h1>'+esc(f.hero_title||'')+'</h1><p>'+esc(f.hero_intro||'')+'</p></div></div><section><div class="wrap"><div class="support-intro-row"><div><div class="eyebrow">'+esc(f.section_eyebrow||'')+'</div><h2>'+esc(f.section_title||'')+'</h2></div><p>'+esc(f.section_body||'')+'</p></div>'+(contactHtml?'<div class="support-contact-grid">'+contactHtml+'</div>':'')+notes+'<div class="support-bottom-grid"><div><div class="eyebrow">'+esc(f.bottom_eyebrow||'')+'</div><h3>'+esc(f.bottom_title||'')+'</h3><p>'+esc(f.bottom_body||'')+'</p></div>'+links+'</div></div></section></main>';
+    }
+    const doc=new DOMParser().parseFromString(html,'text/html'),main=doc.querySelector('main');if(!main)return html;
     const set=(root,sel,val)=>{if(val===undefined||val===null||val==='')return;const el=root.querySelector(sel);if(el)el.textContent=val;};
     const hero=main.querySelector('.support-hero');if(hero){set(hero,'.eyebrow',f.hero_eyebrow);set(hero,'h1',f.hero_title);set(hero,'p',f.hero_intro);}
     const intro=main.querySelector('.support-intro-row');if(intro){set(intro,'.eyebrow',f.section_eyebrow);set(intro,'h2',f.section_title);const ps=[...intro.querySelectorAll('p')];if(ps.length&&f.section_body)ps[ps.length-1].textContent=f.section_body;}
