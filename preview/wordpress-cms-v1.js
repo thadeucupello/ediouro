@@ -165,7 +165,7 @@ function installCmsCommerceRenderer(){
         retailTitle.style.display='';
         retailGrid.style.display='';
         retailGrid.innerHTML=links.map(x=>
-          '<div class="retail" onclick="window.open('+JSON.stringify(x.url)+',\'_blank\')">'+esc(x.name||x.key||'Loja')+' <span>↗</span></div>'
+          '<a class="retail" href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit">'+esc(x.name||x.key||'Loja')+' <span>↗</span></a>'
         ).join('');
       }else{
         retailTitle.style.display='none';
