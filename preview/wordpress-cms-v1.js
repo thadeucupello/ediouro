@@ -1,18 +1,279 @@
 (function(){
 let bootPromise=null;
-async function boot(){
-  try{
-    const r=await fetch('/api/cms?summary=1',{cache:'no-cache'});
-    if(!r.ok)throw new Error('CMS bridge '+r.status);
-    const audit=await r.json();
-    window.EDIOURO_CMS_SYNC={status:'shadow-ready',mode:'shadow',...audit,checkedAt:new Date().toISOString()};
-  }catch(err){
-    console.warn('[Ediouro CMS] shadow audit indisponível:',err);
-    window.EDIOURO_CMS_SYNC={status:'shadow-fallback',mode:'shadow',error:String(err),checkedAt:new Date().toISOString()};
+const meaningful=v=>{
+  if(v===null||v===undefined)return false;
+  if(typeof v==='string')return v.trim()!=='';
+  if(Array.isArray(v))return v.length>0;
+  if(typeof v==='object')return Object.keys(v).length>0;
+  return true;
+};
+const mergeReal=(base,next)=>{
+  const out={...(base||{})};
+  for(const [k,v] of Object.entries(next||{}))if(meaningful(v))out[k]=v;
+  return out;
+};
+const digits=v=>String(v||'').replace(/\D/g,'');
+const paras=v=>{
+  if(Array.isArray(v))return v.filter(Boolean);
+  return String(v||'').split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);
+};
+const mapSlug=(slug,map)=>map.get(slug)||slug;
+
+function rebuildMaps(){
+  if(typeof W!=='undefined'){
+    Object.keys(W).forEach(k=>delete W[k]);
+    (DATA.works||[]).forEach(w=>W[w.slug]=w);
+  }
+  if(typeof ED!=='undefined'){
+    Object.keys(ED).forEach(k=>delete ED[k]);
+    (DATA.editions||[]).forEach(e=>(ED[e.workSlug]??=[]).push(e));
+    Object.values(ED).forEach(a=>a.sort((x,y)=>(y.displayPriority||0)-(x.displayPriority||0)));
+  }
+  if(typeof C!=='undefined'){
+    Object.keys(C).forEach(k=>delete C[k]);
+    (DATA.contributors||[]).forEach(c=>C[c.slug]=c);
+  }
+  if(typeof S!=='undefined'){
+    Object.keys(S).forEach(k=>delete S[k]);
+    (DATA.series||[]).forEach(s=>S[s.slug]=s);
+  }
+  if(typeof P!=='undefined'&&typeof POSTS!=='undefined'){
+    Object.keys(P).forEach(k=>delete P[k]);
+    POSTS.forEach(p=>P[p.slug]=p);
+  }
+  if(typeof I!=='undefined'&&typeof IMPRINTS!=='undefined'){
+    Object.keys(I).forEach(k=>delete I[k]);
+    IMPRINTS.forEach(im=>I[im.slug]=im);
   }
 }
+
+function workFromBook(b,targetSlug,slugMap){
+  const education=b.education?.enabled?{
+    section:b.education.stage||'',
+    label:(typeof EDUCATION_SECTIONS!=='undefined'?(EDUCATION_SECTIONS.find(x=>x.key===b.education.stage)?.label||''):''),
+    age:b.education.age||'',genre:b.education.genre||'',themes:b.education.themes||'',
+    transversal:b.education.transversal||'',note:b.education.note||'',source:'wordpress-cms'
+  }:null;
+  return {
+    id:b.id,slug:targetSlug,title:b.title,subtitle:b.subtitle,
+    shortDescription:b.shortDescription,
+    description:paras(b.description),
+    credits:(b.authors||[]).map((slug,i)=>({contributor:slug,role:'autor',order:i+1})),
+    imprint:b.imprint,
+    collections:(b.collections||[]),
+    categories:(b.categories||[]),
+    series:b.series||null,
+    seriesOrder:b.seriesOrder==null?null:Number(b.seriesOrder),
+    relatedBooks:(b.relatedBooks||[]).map(x=>mapSlug(x,slugMap)),
+    relatedArticles:b.relatedArticles||[],
+    education,
+    seoTitle:b.seo?.title,seoDescription:b.seo?.description,
+    ogImage:b.ogImage||'',
+    source:{system:'wordpress-cms'}
+  };
+}
+function editionFromFormat(b,f,index,targetSlug){
+  const isbn=digits(f.isbn||f.ean);
+  const type=f.type||'brochura';
+  return {
+    id:'wp-'+b.id+'-'+(isbn||index),workSlug:targetSlug,
+    label:f.label||({'brochura':'Brochura','capa-dura':'Capa dura','livro-digital':'Livro digital','audiolivro':'Audiolivro'}[type]||type),
+    format:type,publicationDate:f.publication_date||'',language:'pt-BR',
+    status:f.status||'em-catalogo',source:{system:'wordpress-cms'},
+    binding:f.binding||'',isbn:f.isbn||'',ean:f.ean||f.isbn||'',
+    pageCount:f.page_count?Number(f.page_count):null,dimensions:f.dimensions||'',
+    cover:f.cover||b.cover||'',gallery:[],
+    price:(f.price===null||f.price===undefined||f.price==='')?null:Number(f.price),
+    currency:'BRL',credits:[],displayPriority:1000-index,
+    retailerLinks:(f.retailers||[]).filter(r=>r&&r.url).map(r=>({name:r.name||r.key||'Loja',url:r.url,key:r.key||''})),
+    availabilityNote:f.availability_note||'',digitalFormat:f.digital_format||'',
+    duration:f.duration||'',narrator:f.narrator||''
+  };
+}
+function authorFromCms(a){
+  return {
+    slug:a.slug,name:a.name,roles:(a.roles||[]).length?a.roles:['autor'],
+    shortBio:a.shortBio||'',bio:paras(a.bio),photo:a.photo||'',
+    photoAlt:a.photoAlt||'',photoCredit:a.photoCredit||'',photoSource:a.photoSource||'',
+    nationality:a.nationality||'',website:a.website||'',instagram:a.instagram||'',
+    featured:!!a.featured,seo:a.seo||{},source:{system:'wordpress-cms'}
+  };
+}
+function seriesFromCms(x,slugMap){
+  return {
+    slug:x.slug,name:x.name,description:x.description||'',imprint:x.imprint||'',
+    mainContributor:x.mainAuthor||null,
+    workSlugs:(x.workSlugs||[]).map(s=>mapSlug(s,slugMap)),
+    relatedArticles:x.relatedArticles||[],banner:x.banner||'',seo:x.seo||{},
+    source:{system:'wordpress-cms'}
+  };
+}
+function articleFromCms(p,slugMap){
+  return {
+    slug:p.slug,title:p.title,kind:p.kind||'Guia',standfirst:p.standfirst||'',
+    image:p.image||'',body:paras(p.body),
+    relatedWorks:(p.relatedBooks||[]).map(s=>mapSlug(s,slugMap)),
+    relatedImprint:p.relatedImprint||null,relatedAuthors:p.relatedAuthors||[],
+    relatedSeries:p.relatedSeries||[],publishedAt:p.publishedAt||'',
+    readingTime:Number(p.readingTime||0),featured:!!p.featured,seo:p.seo||{},
+    source:{system:'wordpress-cms'}
+  };
+}
+
+async function sync(){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
+  let r;
+  try{r=await fetch('/api/cms',{cache:'no-cache',signal:controller.signal});}
+  finally{clearTimeout(timer);}
+  if(!r.ok)throw new Error('CMS bridge '+r.status);
+  const data=await r.json();
+  if(!data?.ok||!Array.isArray(data.books))throw new Error('payload CMS inválido');
+
+  // ISBN é a âncora segura: mantém as URLs que o preview já usa.
+  const staticByIsbn=new Map();
+  for(const e of DATA.editions||[]){
+    const k=digits(e.isbn||e.ean);
+    if(k.length===13&&!staticByIsbn.has(k))staticByIsbn.set(k,e);
+  }
+  const slugMap=new Map();
+  for(const b of data.books){
+    for(const f of b.formats||[]){
+      const old=staticByIsbn.get(digits(f.isbn||f.ean));
+      if(old?.workSlug){slugMap.set(b.slug,old.workSlug);break;}
+    }
+  }
+
+  // Livros: atualiza o que existe e acrescenta o que ainda não existe.
+  // Nesta etapa NÃO removemos nenhum registro estático.
+  const worksBySlug=new Map((DATA.works||[]).map(w=>[w.slug,w]));
+  for(const b of data.books){
+    const target=mapSlug(b.slug,slugMap),next=workFromBook(b,target,slugMap),old=worksBySlug.get(target);
+    if(old){
+      const merged=mergeReal(old,next);
+      // Campo vazio no CMS não apaga a camada pedagógica estática nesta fase.
+      if(!next.education&&old.education)merged.education=old.education;
+      Object.assign(old,merged);
+    }else{
+      DATA.works.push(next);worksBySlug.set(target,next);
+    }
+  }
+
+  // Formatos: ISBN casa com a edição atual. O CMS só substitui valores preenchidos.
+  const editionsByIsbn=new Map();
+  for(const e of DATA.editions||[]){
+    const k=digits(e.isbn||e.ean);if(k)editionsByIsbn.set(k,e);
+  }
+  for(const b of data.books){
+    const target=mapSlug(b.slug,slugMap);
+    (b.formats||[]).forEach((f,i)=>{
+      const next=editionFromFormat(b,f,i,target),k=digits(next.isbn||next.ean),old=k?editionsByIsbn.get(k):null;
+      if(old){
+        Object.assign(old,mergeReal(old,next));
+        if((old.format==='impresso'||old.label==='Edição impressa'||old.binding==='Edição impressa')&&next.format==='brochura'){
+          old.format='brochura';old.label='Brochura';old.binding='Brochura';
+        }
+      }else{
+        DATA.editions.push(next);if(k)editionsByIsbn.set(k,next);
+      }
+    });
+  }
+
+  // Autores.
+  const contributorsBySlug=new Map((DATA.contributors||[]).map(c=>[c.slug,c]));
+  for(const a of data.authors||[]){
+    const next=authorFromCms(a),old=contributorsBySlug.get(next.slug);
+    if(old)Object.assign(old,mergeReal(old,next));
+    else{DATA.contributors.push(next);contributorsBySlug.set(next.slug,next);}
+  }
+
+  // Selos, preservando objetos já referenciados pelo front.
+  if(typeof IMPRINTS!=='undefined'){
+    const imprintsBySlug=new Map(IMPRINTS.map(x=>[x.slug,x]));
+    for(const im of data.imprints||[]){
+      const next={slug:im.slug,name:im.name,tagline:im.tagline||'',description:im.description||'',logo:im.logo||'',color:im.color||'',ink:im.ink||'',focus:im.focus||[],founded:im.founded||'',heroBooks:(im.heroBooks||[]).map(s=>mapSlug(s,slugMap)),featuredBooks:(im.featuredBooks||[]).map(s=>mapSlug(s,slugMap)),featuredSeries:im.featuredSeries||[],featuredAuthors:im.featuredAuthors||[],featuredArticles:im.featuredArticles||[],seo:im.seo||{},source:{system:'wordpress-cms'}};
+      const old=imprintsBySlug.get(next.slug);
+      if(old)Object.assign(old,mergeReal(old,next));
+      else{IMPRINTS.push(next);imprintsBySlug.set(next.slug,next);}
+    }
+  }
+
+  // Séries verdadeiras. Coleções ficam, por enquanto, no mecanismo original do preview.
+  const cmsSeries=(data.series||[]).filter(x=>(x.entityType||'serie')!=='colecao');
+  const seriesBySlug=new Map((DATA.series||[]).map(x=>[x.slug,x]));
+  for(const row of cmsSeries){
+    const next=seriesFromCms(row,slugMap),old=seriesBySlug.get(next.slug);
+    if(old)Object.assign(old,mergeReal(old,next));
+    else{DATA.series.push(next);seriesBySlug.set(next.slug,next);}
+  }
+  window.EDIOURO_CMS_COLLECTIONS=(data.series||[]).filter(x=>x.entityType==='colecao').map(x=>seriesFromCms(x,slugMap));
+
+  // Descubra: mescla os artigos e respeita a curadoria do índice quando ela existe.
+  if(typeof POSTS!=='undefined'){
+    const postsBySlug=new Map(POSTS.map(p=>[p.slug,p]));
+    for(const row of data.articles||[]){
+      const next=articleFromCms(row,slugMap),old=postsBySlug.get(next.slug);
+      if(old)Object.assign(old,mergeReal(old,next));
+      else{POSTS.push(next);postsBySlug.set(next.slug,next);}
+    }
+    const dr=data.routes?.['discover-index']?.relations||{};
+    const order=[dr.featured,...(dr.selected||[])].filter(Boolean);
+    if(order.length){
+      const rank=new Map(order.map((slug,i)=>[slug,i]));
+      POSTS.sort((a,b)=>(rank.has(a.slug)?rank.get(a.slug):9999)-(rank.has(b.slug)?rank.get(b.slug):9999)||String(b.publishedAt||'').localeCompare(String(a.publishedAt||'')));
+    }
+  }
+
+  // Home: troca apenas seleções que estejam efetivamente preenchidas no CMS.
+  const hr=data.routes?.home?.relations||{};
+  if(typeof CUR!=='undefined'){
+    if(hr.heroBooks?.length)CUR.hero=hr.heroBooks.map(s=>mapSlug(s,slugMap));
+    if(hr.arrivals?.length)CUR.arrivals=hr.arrivals.map(s=>mapSlug(s,slugMap));
+    if(hr.reading?.length)CUR.reading=hr.reading.map(s=>mapSlug(s,slugMap));
+    if(hr.authors?.length)CUR.authors=[...hr.authors];
+    if(hr.placement1Books?.length)CUR.cosmere=hr.placement1Books.map(s=>mapSlug(s,slugMap));
+  }
+
+  // Etapas pedagógicas: só atualiza rótulos/idades, sem mudar a estrutura da página.
+  if(typeof EDUCATION_SECTIONS!=='undefined'&&Array.isArray(EDUCATION_SECTIONS)){
+    const byKey=new Map(EDUCATION_SECTIONS.map(x=>[x.key,x]));
+    for(const st of data.educationStages||[]){
+      const old=byKey.get(st.slug);
+      if(old){if(st.name)old.label=st.name;if(st.age)old.age=st.age;}
+    }
+  }
+  if(typeof EDU_ARCHIVE_SECTIONS!=='undefined'&&Array.isArray(EDU_ARCHIVE_SECTIONS)){
+    const byKey=new Map(EDU_ARCHIVE_SECTIONS.map(x=>[x.key,x]));
+    for(const st of data.educationStages||[]){
+      const old=byKey.get(st.slug);
+      if(old){if(st.name)old.label=st.name;if(st.age)old.age=st.age;}
+    }
+  }
+
+  rebuildMaps();
+  window.EDIOURO_CMS_PAYLOAD=data;
+  window.EDIOURO_CMS_SYNC={
+    status:'ready',mode:'data-layer',source:data.source||'wordpress-cms',version:data.version,
+    books:(data.books||[]).length,authors:(data.authors||[]).length,
+    imprints:(data.imprints||[]).length,series:cmsSeries.length,
+    collections:window.EDIOURO_CMS_COLLECTIONS.length,articles:(data.articles||[]).length,
+    syncedAt:new Date().toISOString()
+  };
+
+  // Reexecuta o MESMO sistema de rotas do preview. Nenhum HTML é remontado aqui.
+  const refresh=()=>{try{window.dispatchEvent(new Event('hashchange'));}catch(e){console.warn('[Ediouro CMS] refresh',e);}};
+  if(document.readyState==='loading')addEventListener('DOMContentLoaded',()=>setTimeout(refresh,0),{once:true});
+  else setTimeout(refresh,0);
+}
+
 window.ediouroCmsBootstrap=function(){
-  if(!bootPromise)bootPromise=boot();
+  if(bootPromise)return bootPromise;
+  bootPromise=sync().catch(err=>{
+    console.warn('[Ediouro CMS] fallback integral para preview estático:',err);
+    window.EDIOURO_CMS_SYNC={status:'fallback',mode:'data-layer',error:String(err),syncedAt:new Date().toISOString()};
+  });
   return bootPromise;
 };
+
+// O site estático renderiza normalmente. A sincronização acontece em paralelo.
+window.ediouroCmsBootstrap();
 })();
